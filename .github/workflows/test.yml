@@ -18,9 +18,5 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: go get -u github.com/kyoh86/richgo
-
       - name: Tests
         run: make test
-        env:
-          RICHGO_FORCE_COLOR: 1
