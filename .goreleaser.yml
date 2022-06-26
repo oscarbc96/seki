@@ -11,7 +11,12 @@ builds:
       - linux
       - windows
       - darwin
-    mod_timestamp: "{{ .CommitTimestamp }}"
+    mod_timestamp: "{{ .Timestamp }}"
+    ldflags:
+      - -s -w
+      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Version={{.Version}}
+      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Revision={{.FullCommit}}
+      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Date={{ .Date }}
 
 dockers:
   - use: buildx
@@ -26,7 +31,7 @@ dockers:
       - --label=org.opencontainers.image.url={{ .GitURL }}
       - --label=org.opencontainers.image.source={{replace .GitURL ".git" "" }}
       - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ .CommitDate }}
+      - --label=org.opencontainers.image.created={{ .Date }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
   - use: buildx
     goos: linux
@@ -40,7 +45,7 @@ dockers:
       - --label=org.opencontainers.image.url={{ .GitURL }}
       - --label=org.opencontainers.image.source={{replace .GitURL ".git" "" }}
       - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ .CommitDate }}
+      - --label=org.opencontainers.image.created={{ .Date }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
 
 docker_manifests:

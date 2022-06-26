@@ -22,7 +22,8 @@ test:
 
 build:
 	$(info ******************** building bin ********************)
-	go build -o $(GOPATH)/bin/seki
+	goreleaser build --snapshot --rm-dist --single-target
+	find dist -name seki
 
 install:
 	$(info ******************** downloading dependencies ********************)
