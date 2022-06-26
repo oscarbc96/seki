@@ -42,47 +42,13 @@ dockers:
       - --label=org.opencontainers.image.version={{ .Version }}
       - --label=org.opencontainers.image.created={{ .CommitDate }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
-  - use: buildx
-    goos: linux
-    goarch: arm
-    goarm: 6
-    image_templates:
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:{{ .Version }}-armv6
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-armv6
-    build_flag_templates:
-      - --platform=linux/arm/v6
-      - --label=org.opencontainers.image.title={{ .ProjectName }}
-      - --label=org.opencontainers.image.url={{ .GitURL }}
-      - --label=org.opencontainers.image.source={{replace .GitURL ".git" "" }}
-      - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ .CommitDate }}
-      - --label=org.opencontainers.image.revision={{ .FullCommit }}
-  - use: buildx
-    goos: linux
-    goarch: arm
-    goarm: 7
-    image_templates:
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:{{ .Version }}-armv7
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-armv7
-    build_flag_templates:
-      - --platform=linux/arm/v7
-      - --label=org.opencontainers.image.title={{ .ProjectName }}
-      - --label=org.opencontainers.image.url={{ .GitURL }}
-      - --label=org.opencontainers.image.source={{replace .GitURL ".git" "" }}
-      - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ .CommitDate }}
-      - --label=org.opencontainers.image.revision={{ .FullCommit }}
 
 docker_manifests:
   - name_template: ghcr.io/oscarbc96/{{ .ProjectName }}:{{ .Version }}
     image_templates:
       - ghcr.io/oscarbc96/{{ .ProjectName }}:{{ .Version }}-amd64
       - ghcr.io/oscarbc96/{{ .ProjectName }}:{{ .Version }}-arm64v8
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:{{ .Version }}-armv6
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:{{ .Version }}-armv7
   - name_template: ghcr.io/oscarbc96/{{ .ProjectName }}:latest
     image_templates:
       - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-amd64
       - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-arm64v8
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-armv6
-      - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-armv7
