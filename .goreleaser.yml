@@ -17,9 +17,9 @@ builds:
       - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Version={{.Version}}
       - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Commit={{.FullCommit}}
       - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.BuiltDate={{ .Date }}
-    hooks:
-      post:
-       - upx "{{ .Path }}"
+#    hooks:
+#      post:
+#       - upx --brute "{{ .Path }}"
 
 dockers:
   - use: buildx
