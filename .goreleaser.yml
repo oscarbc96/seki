@@ -15,8 +15,11 @@ builds:
     ldflags:
       - -s -w
       - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Version={{.Version}}
-      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Revision={{.FullCommit}}
-      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Date={{ .Date }}
+      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Commit={{.FullCommit}}
+      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.BuiltDate={{ .Date }}
+    hooks:
+      post:
+       - upx "{{ .Path }}"
 
 dockers:
   - use: buildx
