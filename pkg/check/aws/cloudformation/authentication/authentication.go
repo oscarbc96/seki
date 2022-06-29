@@ -1,16 +1,16 @@
-package aws_cloudformation_authentication
+package check_aws_cloudformation_authentication
 
 import (
 	"fmt"
 	"github.com/awslabs/goformation/v6"
-	"github.com/oscarbc96/seki/pkg/analyser"
+	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/result"
 )
 
 func init() {
-	analyser.Analysers["a"] = Run
+	check.Analysers["a"] = Run
 }
-func Run() (*result.RuleResult, error) {
+func Run() (*result.CheckResult, error) {
 	template, err := goformation.Open("test.json")
 	if err != nil {
 		return nil, err
@@ -32,12 +32,12 @@ func Run() (*result.RuleResult, error) {
 					//		]
 					//	):
 					//		return True
-					return &result.RuleResult{Result: result.FAIL, Severity: result.Medium}, nil
+					return &result.CheckResult{Result: result.FAIL, Severity: result.Medium}, nil
 				}
 			}
 
 		}
 	}
 
-	return &result.RuleResult{Result: result.PASS, Severity: result.Medium}, nil
+	return &result.CheckResult{Result: result.PASS, Severity: result.Medium}, nil
 }

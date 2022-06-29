@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type Formater func(r *result.RuleResult) (string, error)
+type Formater func(r *result.CheckResult) (string, error)
 
 type Format int
 

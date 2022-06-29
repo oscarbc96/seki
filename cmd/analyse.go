@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	aws_cloudformation_authentication "github.com/oscarbc96/seki/pkg/analyser/aws/cloudformation"
+	check_docker_dockerfile "github.com/oscarbc96/seki/pkg/check/docker/dockerfile"
 	"github.com/oscarbc96/seki/pkg/report"
 	"github.com/spf13/cobra"
 )
@@ -16,7 +16,7 @@ var analyseCmd = &cobra.Command{
 		CheckErr(err)
 		formater, err := report.GetFormater(format)
 
-		result, err := aws_cloudformation_authentication.Run()
+		result, err := check_docker_dockerfile.CheckRegistryIsAllowed()
 		CheckErr(err)
 
 		output, err := formater(result)
