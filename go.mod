@@ -7,9 +7,12 @@ require (
 	github.com/distribution/distribution v2.8.1+incompatible
 	github.com/moby/buildkit v0.10.3
 	github.com/rs/zerolog v1.27.0
+	github.com/samber/lo v1.21.0
 	github.com/spf13/afero v1.8.2
 	github.com/spf13/cobra v1.5.0
 )
+
+require golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect

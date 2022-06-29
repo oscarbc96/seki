@@ -8,6 +8,7 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/parser"
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/result"
+	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"regexp"
 )
@@ -29,15 +30,6 @@ type Match struct {
 	Platform string `json:"platform"`
 	Registry string `json:"registry"`
 	Tag      string `json:"tag"`
-}
-
-func contains(list []string, elem string) bool {
-	for _, aux := range list {
-		if aux == elem {
-			return true
-		}
-	}
-	return false
 }
 
 func CheckRegistryIsAllowed() (*result.CheckResult, error) {
@@ -66,10 +58,7 @@ func CheckRegistryIsAllowed() (*result.CheckResult, error) {
 	var matches []Match
 	for _, stage := range stages {
 		// check stage inherits from a previous stage
-		//if lo.Contains[string](layerNames, stage.BaseName) {
-		//	continue
-		//}
-		if contains(layerNames, stage.BaseName) {
+		if lo.Contains[string](layerNames, stage.BaseName) {
 			continue
 		}
 
