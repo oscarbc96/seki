@@ -3,7 +3,7 @@ module github.com/oscarbc96/seki
 go 1.18
 
 require (
-	github.com/awslabs/goformation/v6 v6.5.2
+	github.com/awslabs/goformation/v6 v6.5.3
 	github.com/distribution/distribution v2.8.1+incompatible
 	github.com/moby/buildkit v0.10.3
 	github.com/rs/zerolog v1.27.0
