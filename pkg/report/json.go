@@ -5,8 +5,8 @@ import (
 	"github.com/oscarbc96/seki/pkg/result"
 )
 
-func JSONFormat(r *result.CheckResult) (string, error) {
-	jsonOutput, err := json.MarshalIndent(r, "", "  ")
+func JSONFormat(results []result.CheckResult) (string, error) {
+	jsonOutput, err := json.MarshalIndent(results, "", "  ")
 	if err != nil {
 		return "", err
 	}

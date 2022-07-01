@@ -3,13 +3,9 @@ package check_aws_cloudformation_authentication
 import (
 	"fmt"
 	"github.com/awslabs/goformation/v6"
-	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/result"
 )
 
-func init() {
-	check.Analysers["a"] = Run
-}
 func Run() (*result.CheckResult, error) {
 	template, err := goformation.Open("test.json")
 	if err != nil {
