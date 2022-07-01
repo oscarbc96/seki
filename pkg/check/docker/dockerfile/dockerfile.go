@@ -8,6 +8,7 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/parser"
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/result"
+	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"regexp"
@@ -23,10 +24,9 @@ var (
 	namePattern = regexp.MustCompile(`(?m)[\w.]*Dockerfile[\w.]*`)
 )
 
-type Match struct {
+type DockerLayer struct {
 	Digest   string `json:"digest"`
 	Image    string `json:"image"`
-	Layer    string `json:"layer"`
 	Platform string `json:"platform"`
 	Registry string `json:"registry"`
 	Tag      string `json:"tag"`
@@ -48,32 +48,34 @@ func CheckRegistryIsAllowed() (*result.CheckResult, error) {
 		return nil, err
 	}
 
-	var layerNames []string
-	for _, stage := range stages {
-		if stage.Name != "" {
-			layerNames = append(layerNames, stage.Name)
-		}
-	}
+	layerNames := lo.Map[instructions.Stage, string](stages, func(stage instructions.Stage, _ int) string {
+		return stage.Name
+	})
 
-	var matches []Match
+	var matches []DockerLayer
 	for _, stage := range stages {
-		// check stage inherits from a previous stage
+		// Ignoring if stage inherits from a previous stage
 		if lo.Contains[string](layerNames, stage.BaseName) {
 			continue
 		}
 
-		ref, _ := reference.ParseAnyReference(stage.BaseName)
-		named := ref.(reference.Named)
+		ref, err := reference.ParseNormalizedNamed(stage.BaseName)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error parsing reference: %q is not a valid repository/tag", stage.BaseName)
+		}
+		ref = reference.TagNameOnly(ref)
 
-		refMatch := reference.ReferenceRegexp.FindStringSubmatch(reference.TagNameOnly(named).String())
+		var digest string
+		if canonicalReference, isCanonical := ref.(reference.Canonical); isCanonical {
+			digest = canonicalReference.Digest().String()
+		}
 
-		matches = append(matches, Match{
-			Digest:   refMatch[3],
-			Image:    reference.Path(named),
-			Layer:    stage.Name,
+		matches = append(matches, DockerLayer{
+			Digest:   digest,
+			Image:    reference.Path(ref),
 			Platform: stage.Platform,
-			Registry: reference.Domain(named),
-			Tag:      refMatch[2],
+			Registry: reference.Domain(ref),
+			Tag:      ref.(reference.Tagged).Tag(),
 		})
 	}
 	jsonOutput, err := json.MarshalIndent(matches, "", "  ")

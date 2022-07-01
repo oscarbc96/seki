@@ -14,9 +14,9 @@ builds:
     mod_timestamp: "{{ .Timestamp }}"
     ldflags:
       - -s -w
-      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Version={{.Version}}
-      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.Commit={{.FullCommit}}
-      - -X github.com/oscarbc96/{{ .ProjectName }}/cmd.BuiltDate={{ .Date }}
+      - -X github.com/oscarbc96/{{ .ProjectName }}/pkg/metadata.Version={{.Version}}
+      - -X github.com/oscarbc96/{{ .ProjectName }}/pkg/metadata.Commit={{.FullCommit}}
+      - -X github.com/oscarbc96/{{ .ProjectName }}/pkg/metadata.BuiltDate={{ .Date }}
 #    hooks:
 #      post:
 #       - upx --brute "{{ .Path }}"
