@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/oscarbc96/seki/pkg/check"
+	"github.com/oscarbc96/seki/pkg/load"
 	"github.com/oscarbc96/seki/pkg/report"
 	"github.com/oscarbc96/seki/pkg/result"
 	"github.com/rs/zerolog"
@@ -41,18 +42,34 @@ var rootCmd = &cobra.Command{
 		zerolog.SetGlobalLevel(loggingLevel)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		files, _ := load.ListFiles(args)
+
+		final := []result.CheckResult{}
+
+		for _, file := range files {
+			checks := []check.CheckFunction{}
+
+			isDocker, _ := load.DetectDockerfile(file)
+			if isDocker {
+				checks = append(checks, check.Checkers["dockerfile"]...)
+			}
+			isCloudformation, _ := load.DetectCloudformation(file)
+			if isCloudformation {
+				checks = append(checks, check.Checkers["cloudformation"]...)
+			}
+
+			for _, check := range checks {
+				checkResult, err := check(file)
+				CheckErr(err)
+				final = append(final, checkResult...)
+			}
+
+		}
 		formatRawValue, err := cmd.Flags().GetString("format")
 		CheckErr(err)
 		format, err := report.FormatFromString(formatRawValue)
 		CheckErr(err)
 		formater, err := report.GetFormater(format)
-
-		var final []result.CheckResult
-		for _, check := range check.Checkers {
-			checkResult, err := check()
-			CheckErr(err)
-			final = append(final, checkResult...)
-		}
 
 		output, err := formater(final)
 		CheckErr(err)

@@ -20,11 +20,11 @@ func SARIFReport(results []result.CheckResult) (string, error) {
 	run := sarif.NewRun(*tool)
 
 	for _, r := range results {
-		run.AddRule(r.ID).
+		run.AddRule(r.Id).
 			WithDescription(r.Description).
 			WithHelpURI(r.RemediationDoc)
 
-		run.CreateResultForRule(r.ID).
+		run.CreateResultForRule(r.Id).
 			//WithLevel(strings.ToLower(r.Severity)).
 			WithMessage(sarif.NewTextMessage(r.Message)).
 			WithLocations(

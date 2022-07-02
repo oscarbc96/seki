@@ -3,18 +3,12 @@ package check_docker_dockerfile
 import (
 	"github.com/distribution/distribution/reference"
 	"github.com/moby/buildkit/frontend/dockerfile/instructions"
-	docker_parser "github.com/moby/buildkit/frontend/dockerfile/parser"
-	"github.com/oscarbc96/seki/pkg/parser"
+	"github.com/moby/buildkit/frontend/dockerfile/parser"
+	"github.com/oscarbc96/seki/pkg/load"
 	"github.com/oscarbc96/seki/pkg/result"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
-	"github.com/spf13/afero"
 	"io"
-)
-
-var (
-	FS     = afero.NewOsFs()
-	FSUtil = &afero.Afero{Fs: FS}
 )
 
 type dockerLayer struct {
@@ -23,11 +17,11 @@ type dockerLayer struct {
 	Platform string
 	Registry string
 	Tag      string
-	Location parser.Range
+	Location load.Range
 }
 
 func parseDockerLayers(file io.Reader) ([]dockerLayer, error) {
-	parsedDockerfile, err := docker_parser.Parse(file)
+	parsedDockerfile, err := parser.Parse(file)
 	if err != nil {
 		return nil, err
 	}
@@ -65,12 +59,12 @@ func parseDockerLayers(file io.Reader) ([]dockerLayer, error) {
 			Platform: stage.Platform,
 			Registry: reference.Domain(ref),
 			Tag:      ref.(reference.Tagged).Tag(),
-			Location: parser.Range{
-				Start: parser.Position{
+			Location: load.Range{
+				Start: load.Position{
 					Line:      stage.Location[0].Start.Line,
 					Character: stage.Location[0].Start.Character,
 				},
-				End: parser.Position{
+				End: load.Position{
 					Line:      stage.Location[0].End.Line,
 					Character: stage.Location[0].End.Character,
 				},
@@ -80,10 +74,11 @@ func parseDockerLayers(file io.Reader) ([]dockerLayer, error) {
 	return matches, nil
 }
 
-func CheckDockerHubRateLimit() ([]result.CheckResult, error) {
-	file, err := FSUtil.Open("Dockerfile")
+func CheckDockerHubRateLimit(f load.InputFile) ([]result.CheckResult, error) {
+	file, err := f.Open()
+	defer file.Close()
 	if err != nil {
-		return nil, err
+		return []result.CheckResult{}, err
 	}
 
 	dockerLayers, err := parseDockerLayers(file)
@@ -94,17 +89,26 @@ func CheckDockerHubRateLimit() ([]result.CheckResult, error) {
 	var output []result.CheckResult
 	for _, layer := range dockerLayers {
 		if layer.Registry == "docker.io" {
-			output = append(output, result.CheckResult{Result: result.FAIL, Severity: result.Low, Message: "Docker Hub may apply rate limiting", Range: layer.Location})
+			output = append(
+				output,
+				result.CheckResult{
+					Result:   result.FAIL,
+					Severity: result.Low,
+					Message:  "Docker Hub may apply rate limiting",
+					Range:    layer.Location,
+				},
+			)
 		}
 	}
 
 	return output, nil
 }
 
-func CheckLatestTag() ([]result.CheckResult, error) {
-	file, err := FSUtil.Open("Dockerfile")
+func CheckLatestTag(f load.InputFile) ([]result.CheckResult, error) {
+	file, err := f.Open()
+	defer file.Close()
 	if err != nil {
-		return nil, err
+		return []result.CheckResult{}, err
 	}
 
 	dockerLayers, err := parseDockerLayers(file)
@@ -115,7 +119,15 @@ func CheckLatestTag() ([]result.CheckResult, error) {
 	var output []result.CheckResult
 	for _, layer := range dockerLayers {
 		if layer.Tag == "latest" {
-			output = append(output, result.CheckResult{Result: result.FAIL, Severity: result.High, Message: "Ensure the image uses a non latest version tag", Range: layer.Location})
+			output = append(
+				output,
+				result.CheckResult{
+					Result:   result.FAIL,
+					Severity: result.High,
+					Message:  "Ensure the image uses a non latest version tag",
+					Range:    layer.Location,
+				},
+			)
 		}
 	}
 
