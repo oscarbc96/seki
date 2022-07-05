@@ -8,7 +8,7 @@ require (
 	github.com/moby/buildkit v0.10.3
 	github.com/owenrumney/go-sarif/v2 v2.1.2
 	github.com/rs/zerolog v1.27.0
-	github.com/samber/lo v1.21.0
+	github.com/samber/lo v1.25.0
 	github.com/spf13/afero v1.8.2
 	github.com/spf13/cobra v1.5.0
 )
