@@ -2,22 +2,20 @@ package report
 
 import (
 	"fmt"
-	"github.com/oscarbc96/seki/pkg/result"
+	"github.com/oscarbc96/seki/pkg/run"
 	"strings"
 )
 
-type Formater func(r []result.CheckResult) (string, error)
+type Formater func(r []run.Output) (string, error)
 
 type Format int
 
 const (
 	JSON Format = iota
-	SARIF
 )
 
 var FormatIDs = map[Format][]string{
-	JSON:  {"json"},
-	SARIF: {"sarif"},
+	JSON: {"json"},
 }
 
 var DefaultFormat = FormatIDs[JSON][0]
@@ -38,8 +36,6 @@ func GetFormater(f Format) (Formater, error) {
 	switch f {
 	case JSON:
 		return JSONFormat, nil
-	case SARIF:
-		return SARIFReport, nil
 
 	default:
 		return nil, fmt.Errorf("Unrecognized formater: %s", FormatIDs[f])

@@ -5,7 +5,7 @@ import (
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
 	"github.com/oscarbc96/seki/pkg/report"
-	"github.com/oscarbc96/seki/pkg/result"
+	"github.com/oscarbc96/seki/pkg/run"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/afero"
@@ -42,36 +42,51 @@ var rootCmd = &cobra.Command{
 		zerolog.SetGlobalLevel(loggingLevel)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		files, _ := load.ListFiles(args)
+		inputs, _ := load.FlatPathsToInputs(args)
 
-		final := []result.CheckResult{}
-
-		for _, file := range files {
-			checks := []check.CheckFunction{}
-
-			isDocker, _ := load.DetectDockerfile(file)
-			if isDocker {
-				checks = append(checks, check.Checkers["dockerfile"]...)
+		var outputs []run.Output
+		for _, input := range inputs {
+			output := run.Output{
+				Path:          input.Path(),
+				DetectedTypes: input.DetectedTypes(),
 			}
-			isCloudformation, _ := load.DetectCloudformation(file)
-			if isCloudformation {
-				checks = append(checks, check.Checkers["cloudformation"]...)
-			}
+			for _, detectedType := range input.DetectedTypes() {
+				chcks := check.GetChecksFor(detectedType)
+				for _, chck := range chcks {
+					result, _ := chck.Run(input)
 
-			for _, check := range checks {
-				checkResult, err := check(file)
-				CheckErr(err)
-				final = append(final, checkResult...)
-			}
+					checkOutput := run.CheckOutput{
+						Id:             chck.Id(),
+						Name:           chck.Name(),
+						Description:    chck.Description(),
+						Severity:       chck.Severity(),
+						Controls:       chck.Controls(),
+						Tags:           chck.Tags(),
+						RemediationDoc: chck.RemediationDoc(),
+						Status:         result.Status,
+						Context:        result.Context,
+					}
+					for _, location := range result.Location {
+						newCheckOutput := checkOutput
+						checkOutput.Location = location
+						output.Checks = append(output.Checks, newCheckOutput)
+					}
+					if len(result.Location) == 0 {
+						output.Checks = append(output.Checks, checkOutput)
+					}
 
+				}
+			}
+			outputs = append(outputs, output)
 		}
+
 		formatRawValue, err := cmd.Flags().GetString("format")
 		CheckErr(err)
 		format, err := report.FormatFromString(formatRawValue)
 		CheckErr(err)
 		formater, err := report.GetFormater(format)
 
-		output, err := formater(final)
+		output, err := formater(outputs)
 		CheckErr(err)
 		fmt.Print(output)
 	},
