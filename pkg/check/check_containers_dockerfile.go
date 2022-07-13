@@ -83,7 +83,7 @@ func parseDockerLayers(file io.Reader) ([]dockerLayer, error) {
 
 type CheckContainersDockerfileDockerHubRateLimit struct{}
 
-func (CheckContainersDockerfileDockerHubRateLimit) Id() string { return "SK_DOCKERFILE_2" }
+func (CheckContainersDockerfileDockerHubRateLimit) Id() string { return "SK_3" }
 
 func (CheckContainersDockerfileDockerHubRateLimit) Name() string { return "Name" }
 
@@ -130,7 +130,7 @@ func (CheckContainersDockerfileDockerHubRateLimit) Run(f load.Input) (*Result, e
 
 type CheckContainersDockerfileLatestTag struct{}
 
-func (CheckContainersDockerfileLatestTag) Id() string { return "SK_DOCKERFILE_1" }
+func (CheckContainersDockerfileLatestTag) Id() string { return "SK_4" }
 
 func (CheckContainersDockerfileLatestTag) Name() string { return "Name" }
 
@@ -142,7 +142,7 @@ func (CheckContainersDockerfileLatestTag) Controls() map[string][]string {
 	return map[string][]string{}
 }
 
-func (CheckContainersDockerfileLatestTag) Tags() []string { return []string{} }
+func (CheckContainersDockerfileLatestTag) Tags() []string { return []string{"docker"} }
 
 func (CheckContainersDockerfileLatestTag) RemediationDoc() string { return "RemediationDoc" }
 

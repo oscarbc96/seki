@@ -15,7 +15,7 @@ func init() {
 
 type CheckAWSCloudformationS3BucketPublicReadAcl struct{}
 
-func (CheckAWSCloudformationS3BucketPublicReadAcl) Id() string { return "SK_DOCKERFILE_1" }
+func (CheckAWSCloudformationS3BucketPublicReadAcl) Id() string { return "SK_1" }
 
 func (CheckAWSCloudformationS3BucketPublicReadAcl) Name() string { return "Name" }
 
@@ -57,7 +57,7 @@ func (CheckAWSCloudformationS3BucketPublicReadAcl) Run(f load.Input) (*Result, e
 
 type CheckAWSCloudformationS3ObjectVersioningRule struct{}
 
-func (CheckAWSCloudformationS3ObjectVersioningRule) Id() string { return "SK_DOCKERFILE_1" }
+func (CheckAWSCloudformationS3ObjectVersioningRule) Id() string { return "SK_2" }
 
 func (CheckAWSCloudformationS3ObjectVersioningRule) Name() string { return "Name" }
 
