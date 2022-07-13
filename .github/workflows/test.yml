@@ -18,5 +18,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate Support Files
+        run: make generate
+
       - name: Tests
         run: make test

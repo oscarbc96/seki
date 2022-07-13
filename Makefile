@@ -2,11 +2,11 @@ ifeq (, $(shell which golangci-lint))
 $(warning "could not find golangci-lint in $(PATH), see https://golangci-lint.run/usage/install/#local-installation")
 endif
 
-.PHONY: format lint test build install freeze freeze-upgrade
+.PHONY: format lint test build install freeze freeze-upgrade generate
 
 default: all
 
-all: install lint test build
+all: install generate lint test build
 
 format:
 	$(info ******************** checking formatting ********************)
@@ -36,3 +36,7 @@ freeze:
 freeze-upgrade:
 	$(info ******************** upgrade dependencies ********************)
 	go get -u ./... && go mod tidy && go mod verify
+
+generate:
+	$(info ******************** generating support files ********************)
+	go generate ./...
