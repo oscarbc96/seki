@@ -3,12 +3,12 @@ module github.com/oscarbc96/seki
 go 1.18
 
 require (
-	github.com/awslabs/goformation/v6 v6.6.0
+	github.com/awslabs/goformation/v6 v6.6.2
 	github.com/distribution/distribution v2.8.1+incompatible
 	github.com/moby/buildkit v0.10.3
 	github.com/rs/zerolog v1.27.0
 	github.com/samber/lo v1.25.0
-	github.com/spf13/afero v1.8.2
+	github.com/spf13/afero v1.9.0
 	github.com/spf13/cobra v1.5.0
 )
 
@@ -32,7 +32,7 @@ require (
 	github.com/sanathkr/go-yaml v0.0.0-20170819195128-ed9d249f429b // indirect
 	github.com/sanathkr/yaml v0.0.0-20170819201035-0056894fa522 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gotest.tools/v3 v3.3.0 // indirect

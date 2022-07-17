@@ -15,10 +15,12 @@ func init() {
 		allChecks,
 		new(CheckContainersDockerfileDockerHubRateLimit),
 		new(CheckContainersDockerfileLatestTag),
+		new(CheckContainersDockerfileAddExists),
+		new(CheckContainersDockerfileRootUser),
 	)
 }
 
-type dockerLayer struct {
+type DockerStage struct {
 	Digest   string
 	Image    string
 	Platform string
@@ -27,7 +29,7 @@ type dockerLayer struct {
 	Location load.Range
 }
 
-func parseDockerLayers(file io.Reader) ([]dockerLayer, error) {
+func parseDockerStages(file io.Reader) ([]DockerStage, error) {
 	parsedDockerfile, err := parser.Parse(file)
 	if err != nil {
 		return nil, err
@@ -42,7 +44,7 @@ func parseDockerLayers(file io.Reader) ([]dockerLayer, error) {
 		return stage.Name
 	})
 
-	var matches []dockerLayer
+	var matches []DockerStage
 	for _, stage := range stages {
 		// Ignoring if stage inherits from a previous stage
 		if lo.Contains[string](layerNames, stage.BaseName) {
@@ -60,7 +62,7 @@ func parseDockerLayers(file io.Reader) ([]dockerLayer, error) {
 			digest = canonicalReference.Digest().String()
 		}
 
-		matches = append(matches, dockerLayer{
+		matches = append(matches, DockerStage{
 			Digest:   digest,
 			Image:    reference.Path(ref),
 			Platform: stage.Platform,
@@ -110,7 +112,7 @@ func (CheckContainersDockerfileDockerHubRateLimit) Run(f load.Input) (*Result, e
 	}
 	defer file.Close()
 
-	dockerLayers, err := parseDockerLayers(file)
+	dockerLayers, err := parseDockerStages(file)
 	if err != nil {
 		return NewSkipResult(), err
 	}
@@ -132,7 +134,9 @@ type CheckContainersDockerfileLatestTag struct{}
 
 func (CheckContainersDockerfileLatestTag) Id() string { return "SK_4" }
 
-func (CheckContainersDockerfileLatestTag) Name() string { return "Name" }
+func (CheckContainersDockerfileLatestTag) Name() string {
+	return "Ensure the base image uses a non latest version tag"
+}
 
 func (CheckContainersDockerfileLatestTag) Description() string { return "Description" }
 
@@ -157,7 +161,7 @@ func (CheckContainersDockerfileLatestTag) Run(f load.Input) (*Result, error) {
 	}
 	defer file.Close()
 
-	dockerLayers, err := parseDockerLayers(file)
+	dockerLayers, err := parseDockerStages(file)
 	if err != nil {
 		return NewSkipResult(), err
 	}
@@ -168,6 +172,140 @@ func (CheckContainersDockerfileLatestTag) Run(f load.Input) (*Result, error) {
 			locations = append(locations, layer.Location)
 		}
 	}
+	if len(locations) != 0 {
+		return NewFailResult(locations), nil
+	}
+
+	return NewPassResult(), nil
+}
+
+type CheckContainersDockerfileAddExists struct{}
+
+func (CheckContainersDockerfileAddExists) Id() string { return "SK_5" }
+
+func (CheckContainersDockerfileAddExists) Name() string {
+	return "Ensure that COPY is used instead of ADD"
+}
+
+func (CheckContainersDockerfileAddExists) Description() string { return "Description" }
+
+func (CheckContainersDockerfileAddExists) Severity() Severity { return Medium }
+
+func (CheckContainersDockerfileAddExists) Controls() map[string][]string {
+	return map[string][]string{}
+}
+
+func (CheckContainersDockerfileAddExists) Tags() []string { return []string{"docker"} }
+
+func (CheckContainersDockerfileAddExists) RemediationDoc() string { return "RemediationDoc" }
+
+func (CheckContainersDockerfileAddExists) InputTypes() []load.DetectedType {
+	return []load.DetectedType{load.DetectedContainerDockerfile}
+}
+
+func (CheckContainersDockerfileAddExists) Run(f load.Input) (*Result, error) {
+	file, err := f.Open()
+	if err != nil {
+		return NewSkipResult(), err
+	}
+	defer file.Close()
+
+	parsedDockerfile, err := parser.Parse(file)
+	if err != nil {
+		return nil, err
+	}
+
+	stages, _, err := instructions.Parse(parsedDockerfile.AST)
+	if err != nil {
+		return nil, err
+	}
+
+	var locations []load.Range
+	for _, stage := range stages {
+		for _, command := range stage.Commands {
+			if _, isAddCommand := command.(*instructions.AddCommand); isAddCommand {
+				locations = append(locations, load.Range{
+					Start: load.Position{
+						Line:   command.Location()[0].Start.Line, // TODO validate the hardcoded 0
+						Column: command.Location()[0].Start.Character,
+					},
+					End: load.Position{
+						Line:   command.Location()[0].End.Line,
+						Column: command.Location()[0].End.Character,
+					},
+				})
+			}
+		}
+	}
+
+	if len(locations) != 0 {
+		return NewFailResult(locations), nil
+	}
+
+	return NewPassResult(), nil
+}
+
+type CheckContainersDockerfileRootUser struct{}
+
+func (CheckContainersDockerfileRootUser) Id() string { return "SK_6" }
+
+func (CheckContainersDockerfileRootUser) Name() string {
+	return "Ensure the last USER is not root"
+}
+
+func (CheckContainersDockerfileRootUser) Description() string { return "Description" }
+
+func (CheckContainersDockerfileRootUser) Severity() Severity { return Medium }
+
+func (CheckContainersDockerfileRootUser) Controls() map[string][]string {
+	return map[string][]string{}
+}
+
+func (CheckContainersDockerfileRootUser) Tags() []string { return []string{"docker"} }
+
+func (CheckContainersDockerfileRootUser) RemediationDoc() string { return "RemediationDoc" }
+
+func (CheckContainersDockerfileRootUser) InputTypes() []load.DetectedType {
+	return []load.DetectedType{load.DetectedContainerDockerfile}
+}
+
+func (CheckContainersDockerfileRootUser) Run(f load.Input) (*Result, error) {
+	file, err := f.Open()
+	if err != nil {
+		return NewSkipResult(), err
+	}
+	defer file.Close()
+
+	parsedDockerfile, err := parser.Parse(file)
+	if err != nil {
+		return nil, err
+	}
+
+	stages, _, err := instructions.Parse(parsedDockerfile.AST)
+	if err != nil {
+		return nil, err
+	}
+
+	var locations []load.Range
+	for _, stage := range stages {
+		for _, command := range stage.Commands {
+			if command, isUserCommand := command.(*instructions.UserCommand); isUserCommand {
+				if command.User == "root" {
+					locations = append(locations, load.Range{
+						Start: load.Position{
+							Line:   command.Location()[0].Start.Line, // TODO validate the hardcoded 0
+							Column: command.Location()[0].Start.Character,
+						},
+						End: load.Position{
+							Line:   command.Location()[0].End.Line,
+							Column: command.Location()[0].End.Character,
+						},
+					})
+				}
+			}
+		}
+	}
+
 	if len(locations) != 0 {
 		return NewFailResult(locations), nil
 	}
