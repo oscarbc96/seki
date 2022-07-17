@@ -78,7 +78,7 @@ func GetAllActions() []string {
 }
 
 func ExpandActions(action string) ([]string, error) {
-	log.Debug().Str("action", action)
+	log.Debug().Str("action", action).Send()
 
 	// Replace *
 	action = strings.Replace(action, "*", ".*", -1)
@@ -87,7 +87,7 @@ func ExpandActions(action string) ([]string, error) {
 	action = strings.Replace(action, "?", ".{1}", -1)
 
 	patternStr := fmt.Sprintf("(?i)^%s$", action)
-	log.Debug().Str("pattern", patternStr)
+	log.Debug().Str("pattern", patternStr).Send()
 
 	pattern, err := regexp.Compile(patternStr)
 	if err != nil {
