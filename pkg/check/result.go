@@ -21,38 +21,52 @@ type CheckResult struct {
 	Status    Status
 	Locations Locations
 	Context   map[string]string
+	Err       ErrorWrapper
 }
 
 func (cr *CheckResult) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
+	type aux struct {
 		Id             string              `json:"id"`
 		Name           string              `json:"name"`
 		Description    string              `json:"description"`
 		Severity       Severity            `json:"severity"`
 		Controls       map[string][]string `json:"controls,omitempty"`
 		Tags           []string            `json:"tags,omitempty"`
-		RemediationDoc string              `json:"remediationdoc,omitempty"`
+		RemediationDoc string              `json:"remediation_doc,omitempty"`
 		Status         Status              `json:"status"`
 		Locations      Locations           `json:"location,omitempty"`
 		Context        map[string]string   `json:"context,omitempty"`
-	}{
-		Id:             cr.Check.Id(),
-		Name:           cr.Check.Name(),
-		Description:    cr.Check.Description(),
-		Severity:       cr.Check.Severity(),
-		Controls:       cr.Check.Controls(),
-		Tags:           cr.Check.Tags(),
-		RemediationDoc: cr.Check.RemediationDoc(),
-		Status:         cr.Status,
-		Locations:      cr.Locations,
-		Context:        cr.Context,
-	})
+		Err            *ErrorWrapper       `json:"error,omitempty"`
+	}
+	tmp := aux{}
+	tmp.Id = cr.Check.Id()
+	tmp.Name = cr.Check.Name()
+	tmp.Description = cr.Check.Description()
+	tmp.Severity = cr.Check.Severity()
+	tmp.Controls = cr.Check.Controls()
+	tmp.Tags = cr.Check.Tags()
+	tmp.RemediationDoc = cr.Check.RemediationDoc()
+	tmp.Status = cr.Status
+	tmp.Locations = cr.Locations
+	tmp.Context = cr.Context
+	if !cr.Err.IsEmpty() {
+		tmp.Err = &cr.Err
+	}
+	return json.Marshal(tmp)
 }
 
 func NewSkipCheckResult(check Check) CheckResult {
 	return CheckResult{
 		Check:  check,
 		Status: SKIP,
+	}
+}
+
+func NewSkipCheckResultWithError(check Check, err error) CheckResult {
+	return CheckResult{
+		Check:  check,
+		Status: SKIP,
+		Err:    ErrorWrapper{Err: err},
 	}
 }
 

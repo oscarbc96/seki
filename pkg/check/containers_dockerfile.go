@@ -49,7 +49,7 @@ func parseDockerImagesFromStages(stages []instructions.Stage) ([]DockerImage, er
 		return stage.Name
 	})
 
-	var matches []DockerImage
+	var dockerImages []DockerImage
 	for _, stage := range stages {
 		// Ignoring if stage inherits from a previous stage
 		if lo.Contains[string](stageNames, stage.BaseName) {
@@ -67,7 +67,7 @@ func parseDockerImagesFromStages(stages []instructions.Stage) ([]DockerImage, er
 			digest = canonicalReference.Digest().String()
 		}
 
-		matches = append(matches, DockerImage{
+		dockerImages = append(dockerImages, DockerImage{
 			Digest:   digest,
 			Image:    reference.Path(ref),
 			Platform: stage.Platform,
@@ -85,7 +85,7 @@ func parseDockerImagesFromStages(stages []instructions.Stage) ([]DockerImage, er
 			},
 		})
 	}
-	return matches, nil
+	return dockerImages, nil
 }
 
 type ContainersDockerfileDockerHubRateLimit struct{}
@@ -102,7 +102,7 @@ func (ContainersDockerfileDockerHubRateLimit) Controls() map[string][]string {
 	return map[string][]string{}
 }
 
-func (ContainersDockerfileDockerHubRateLimit) Tags() []string { return []string{} }
+func (ContainersDockerfileDockerHubRateLimit) Tags() []string { return []string{"docker"} }
 
 func (ContainersDockerfileDockerHubRateLimit) RemediationDoc() string { return "RemediationDoc" }
 
@@ -110,28 +110,28 @@ func (ContainersDockerfileDockerHubRateLimit) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (c ContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileDockerHubRateLimit) Run(f load.Input) CheckResult {
 	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	dockerImages, err := parseDockerImagesFromStages(stages)
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	var locations []load.Range
-	for _, layer := range dockerImages {
-		if layer.Registry == "docker.io" {
-			locations = append(locations, layer.Location)
+	for _, dockerImage := range dockerImages {
+		if dockerImage.Registry == "docker.io" {
+			locations = append(locations, dockerImage.Location)
 		}
 	}
 	if len(locations) != 0 {
-		return NewFailCheckResult(c, locations), nil
+		return NewFailCheckResult(c, locations)
 	}
 
-	return NewPassCheckResult(c), nil
+	return NewPassCheckResult(c)
 }
 
 type ContainersDockerfileLatestTag struct{}
@@ -158,28 +158,28 @@ func (ContainersDockerfileLatestTag) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (c ContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileLatestTag) Run(f load.Input) CheckResult {
 	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	dockerImages, err := parseDockerImagesFromStages(stages)
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	var locations []load.Range
-	for _, layer := range dockerImages {
-		if layer.Tag == "latest" {
-			locations = append(locations, layer.Location)
+	for _, dockerImage := range dockerImages {
+		if dockerImage.Tag == "latest" {
+			locations = append(locations, dockerImage.Location)
 		}
 	}
 	if len(locations) != 0 {
-		return NewFailCheckResult(c, locations), nil
+		return NewFailCheckResult(c, locations)
 	}
 
-	return NewPassCheckResult(c), nil
+	return NewPassCheckResult(c)
 }
 
 type ContainersDockerfileAddExists struct{}
@@ -206,10 +206,10 @@ func (ContainersDockerfileAddExists) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (c ContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileAddExists) Run(f load.Input) CheckResult {
 	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	var locations []load.Range
@@ -231,10 +231,10 @@ func (c ContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
 	}
 
 	if len(locations) != 0 {
-		return NewFailCheckResult(c, locations), nil
+		return NewFailCheckResult(c, locations)
 	}
 
-	return NewPassCheckResult(c), nil
+	return NewPassCheckResult(c)
 }
 
 type ContainersDockerfileRootUser struct{}
@@ -261,10 +261,10 @@ func (ContainersDockerfileRootUser) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (c ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileRootUser) Run(f load.Input) CheckResult {
 	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	var locations []load.Range
@@ -290,8 +290,8 @@ func (c ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
 	}
 
 	if len(locations) != 0 {
-		return NewFailCheckResult(c, locations), nil
+		return NewFailCheckResult(c, locations)
 	}
 
-	return NewPassCheckResult(c), nil
+	return NewPassCheckResult(c)
 }

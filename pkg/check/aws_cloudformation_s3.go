@@ -35,10 +35,10 @@ func (AWSCloudformationS3BucketPublicReadAcl) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedAwsCloudformation}
 }
 
-func (c AWSCloudformationS3BucketPublicReadAcl) Run(f load.Input) (CheckResult, error) {
+func (c AWSCloudformationS3BucketPublicReadAcl) Run(f load.Input) CheckResult {
 	template, err := goformation.Open(f.Path())
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	var locations []load.Range
@@ -49,10 +49,10 @@ func (c AWSCloudformationS3BucketPublicReadAcl) Run(f load.Input) (CheckResult, 
 	}
 
 	if len(locations) != 0 {
-		return NewFailCheckResult(c, locations), nil
+		return NewFailCheckResult(c, locations)
 	}
 
-	return NewPassCheckResult(c), nil
+	return NewPassCheckResult(c)
 }
 
 type AWSCloudformationS3ObjectVersioningRule struct{}
@@ -77,10 +77,10 @@ func (AWSCloudformationS3ObjectVersioningRule) InputTypes() []load.DetectedType 
 	return []load.DetectedType{load.DetectedAwsCloudformation}
 }
 
-func (c AWSCloudformationS3ObjectVersioningRule) Run(f load.Input) (CheckResult, error) {
+func (c AWSCloudformationS3ObjectVersioningRule) Run(f load.Input) CheckResult {
 	template, err := goformation.Open(f.Path())
 	if err != nil {
-		return NewSkipCheckResult(c), err
+		return NewSkipCheckResultWithError(c, err)
 	}
 
 	var locations []load.Range
@@ -91,8 +91,8 @@ func (c AWSCloudformationS3ObjectVersioningRule) Run(f load.Input) (CheckResult,
 	}
 
 	if len(locations) != 0 {
-		return NewFailCheckResult(c, locations), nil
+		return NewFailCheckResult(c, locations)
 	}
 
-	return NewPassCheckResult(c), nil
+	return NewPassCheckResult(c)
 }
