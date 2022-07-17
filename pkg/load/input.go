@@ -21,9 +21,9 @@ func PathExists(path string) (bool, error) {
 }
 
 type Input struct {
-	path           string
-	info           os.FileInfo
-	detected_types []DetectedType
+	path          string
+	info          os.FileInfo
+	detectedTypes []DetectedType
 }
 
 func (i *Input) Path() string {
@@ -61,7 +61,7 @@ func (i *Input) Open() (afero.File, error) {
 }
 
 func (i *Input) DetectedTypes() []DetectedType {
-	return i.detected_types
+	return i.detectedTypes
 }
 
 func FlatPathsToInputs(paths []string) ([]Input, error) {
@@ -92,7 +92,7 @@ func FlatPathsToInputs(paths []string) ([]Input, error) {
 	uniqInputs := lo.UniqBy[Input, string](inputs, func(f Input) string { return f.path })
 
 	for idx, input := range uniqInputs {
-		uniqInputs[idx].detected_types = detectTypesOfInput(input)
+		uniqInputs[idx].detectedTypes = detectTypesOfInput(input)
 	}
 
 	return uniqInputs, nil

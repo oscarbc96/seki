@@ -13,10 +13,10 @@ import (
 func init() {
 	allChecks = append(
 		allChecks,
-		new(CheckContainersDockerfileDockerHubRateLimit),
-		new(CheckContainersDockerfileLatestTag),
-		new(CheckContainersDockerfileAddExists),
-		new(CheckContainersDockerfileRootUser),
+		new(ContainersDockerfileDockerHubRateLimit),
+		new(ContainersDockerfileLatestTag),
+		new(ContainersDockerfileAddExists),
+		new(ContainersDockerfileRootUser),
 	)
 }
 
@@ -83,29 +83,29 @@ func parseDockerStages(file io.Reader) ([]DockerStage, error) {
 	return matches, nil
 }
 
-type CheckContainersDockerfileDockerHubRateLimit struct{}
+type ContainersDockerfileDockerHubRateLimit struct{}
 
-func (CheckContainersDockerfileDockerHubRateLimit) Id() string { return "SK_3" }
+func (ContainersDockerfileDockerHubRateLimit) Id() string { return "SK_3" }
 
-func (CheckContainersDockerfileDockerHubRateLimit) Name() string { return "Name" }
+func (ContainersDockerfileDockerHubRateLimit) Name() string { return "Name" }
 
-func (CheckContainersDockerfileDockerHubRateLimit) Description() string { return "Description" }
+func (ContainersDockerfileDockerHubRateLimit) Description() string { return "Description" }
 
-func (CheckContainersDockerfileDockerHubRateLimit) Severity() Severity { return Medium }
+func (ContainersDockerfileDockerHubRateLimit) Severity() Severity { return Medium }
 
-func (CheckContainersDockerfileDockerHubRateLimit) Controls() map[string][]string {
+func (ContainersDockerfileDockerHubRateLimit) Controls() map[string][]string {
 	return map[string][]string{}
 }
 
-func (CheckContainersDockerfileDockerHubRateLimit) Tags() []string { return []string{} }
+func (ContainersDockerfileDockerHubRateLimit) Tags() []string { return []string{} }
 
-func (CheckContainersDockerfileDockerHubRateLimit) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileDockerHubRateLimit) RemediationDoc() string { return "RemediationDoc" }
 
-func (CheckContainersDockerfileDockerHubRateLimit) InputTypes() []load.DetectedType {
+func (ContainersDockerfileDockerHubRateLimit) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (CheckContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResult, error) {
+func (ContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
 		return NewSkipCheckResult(), err
@@ -130,31 +130,31 @@ func (CheckContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResul
 	return NewPassCheckResult(), nil
 }
 
-type CheckContainersDockerfileLatestTag struct{}
+type ContainersDockerfileLatestTag struct{}
 
-func (CheckContainersDockerfileLatestTag) Id() string { return "SK_4" }
+func (ContainersDockerfileLatestTag) Id() string { return "SK_4" }
 
-func (CheckContainersDockerfileLatestTag) Name() string {
+func (ContainersDockerfileLatestTag) Name() string {
 	return "Ensure the base image uses a non latest version tag"
 }
 
-func (CheckContainersDockerfileLatestTag) Description() string { return "Description" }
+func (ContainersDockerfileLatestTag) Description() string { return "Description" }
 
-func (CheckContainersDockerfileLatestTag) Severity() Severity { return Medium }
+func (ContainersDockerfileLatestTag) Severity() Severity { return Medium }
 
-func (CheckContainersDockerfileLatestTag) Controls() map[string][]string {
+func (ContainersDockerfileLatestTag) Controls() map[string][]string {
 	return map[string][]string{}
 }
 
-func (CheckContainersDockerfileLatestTag) Tags() []string { return []string{"docker"} }
+func (ContainersDockerfileLatestTag) Tags() []string { return []string{"docker"} }
 
-func (CheckContainersDockerfileLatestTag) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileLatestTag) RemediationDoc() string { return "RemediationDoc" }
 
-func (CheckContainersDockerfileLatestTag) InputTypes() []load.DetectedType {
+func (ContainersDockerfileLatestTag) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (CheckContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error) {
+func (ContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
 		return NewSkipCheckResult(), err
@@ -179,31 +179,31 @@ func (CheckContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error)
 	return NewPassCheckResult(), nil
 }
 
-type CheckContainersDockerfileAddExists struct{}
+type ContainersDockerfileAddExists struct{}
 
-func (CheckContainersDockerfileAddExists) Id() string { return "SK_5" }
+func (ContainersDockerfileAddExists) Id() string { return "SK_5" }
 
-func (CheckContainersDockerfileAddExists) Name() string {
+func (ContainersDockerfileAddExists) Name() string {
 	return "Ensure that COPY is used instead of ADD"
 }
 
-func (CheckContainersDockerfileAddExists) Description() string { return "Description" }
+func (ContainersDockerfileAddExists) Description() string { return "Description" }
 
-func (CheckContainersDockerfileAddExists) Severity() Severity { return Medium }
+func (ContainersDockerfileAddExists) Severity() Severity { return Medium }
 
-func (CheckContainersDockerfileAddExists) Controls() map[string][]string {
+func (ContainersDockerfileAddExists) Controls() map[string][]string {
 	return map[string][]string{}
 }
 
-func (CheckContainersDockerfileAddExists) Tags() []string { return []string{"docker"} }
+func (ContainersDockerfileAddExists) Tags() []string { return []string{"docker"} }
 
-func (CheckContainersDockerfileAddExists) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileAddExists) RemediationDoc() string { return "RemediationDoc" }
 
-func (CheckContainersDockerfileAddExists) InputTypes() []load.DetectedType {
+func (ContainersDockerfileAddExists) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (CheckContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
+func (ContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
 		return NewSkipCheckResult(), err
@@ -245,31 +245,31 @@ func (CheckContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error)
 	return NewPassCheckResult(), nil
 }
 
-type CheckContainersDockerfileRootUser struct{}
+type ContainersDockerfileRootUser struct{}
 
-func (CheckContainersDockerfileRootUser) Id() string { return "SK_6" }
+func (ContainersDockerfileRootUser) Id() string { return "SK_6" }
 
-func (CheckContainersDockerfileRootUser) Name() string {
+func (ContainersDockerfileRootUser) Name() string {
 	return "Ensure the last USER is not root"
 }
 
-func (CheckContainersDockerfileRootUser) Description() string { return "Description" }
+func (ContainersDockerfileRootUser) Description() string { return "Description" }
 
-func (CheckContainersDockerfileRootUser) Severity() Severity { return Medium }
+func (ContainersDockerfileRootUser) Severity() Severity { return Medium }
 
-func (CheckContainersDockerfileRootUser) Controls() map[string][]string {
+func (ContainersDockerfileRootUser) Controls() map[string][]string {
 	return map[string][]string{}
 }
 
-func (CheckContainersDockerfileRootUser) Tags() []string { return []string{"docker"} }
+func (ContainersDockerfileRootUser) Tags() []string { return []string{"docker"} }
 
-func (CheckContainersDockerfileRootUser) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileRootUser) RemediationDoc() string { return "RemediationDoc" }
 
-func (CheckContainersDockerfileRootUser) InputTypes() []load.DetectedType {
+func (ContainersDockerfileRootUser) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (CheckContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
+func (ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
 		return NewSkipCheckResult(), err
