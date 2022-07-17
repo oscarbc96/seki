@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/awslabs/goformation/v6 v6.6.2
 	github.com/distribution/distribution v2.8.1+incompatible
+	github.com/jedib0t/go-pretty/v6 v6.3.5
 	github.com/moby/buildkit v0.10.3
 	github.com/rs/zerolog v1.27.0
 	github.com/samber/lo v1.25.0
@@ -12,7 +13,11 @@ require (
 	github.com/spf13/cobra v1.5.0
 )
 
-require golang.org/x/exp v0.0.0-20220713135740-79cabaa25d75 // indirect
+require (
+	github.com/mattn/go-runewidth v0.0.13 // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
+	golang.org/x/exp v0.0.0-20220713135740-79cabaa25d75 // indirect
+)
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect

@@ -66,10 +66,10 @@ var rootCmd = &cobra.Command{
 			for _, detectedType := range input.DetectedTypes() {
 				for _, chck := range check.GetChecksFor(detectedType) {
 					result := chck.Run(input)
-					inputReport.Checks = append(inputReport.Checks, result)
+					inputReport.CheckResults = append(inputReport.CheckResults, result)
 				}
 			}
-			if len(inputReport.Checks) > 0 {
+			if len(inputReport.CheckResults) > 0 {
 				reports = append(reports, inputReport)
 			}
 		}

@@ -12,13 +12,15 @@ type Format int
 
 const (
 	JSON Format = iota
+	Text
 )
 
 var formatToString = map[Format]string{
 	JSON: "json",
+	Text: "text",
 }
 
-var DefaultFormat = formatToString[JSON]
+var DefaultFormat = formatToString[Text]
 
 func (f Format) String() string {
 	return formatToString[f]
@@ -32,6 +34,8 @@ func (f Format) GetFormatter() Formatter {
 	switch f {
 	case JSON:
 		return JSONFormatter
+	case Text:
+		return TextFormatter
 	}
 	return nil
 }

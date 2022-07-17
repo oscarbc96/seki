@@ -7,8 +7,8 @@ import (
 )
 
 type InputReport struct {
-	Input  load.Input
-	Checks []check.CheckResult
+	Input        load.Input
+	CheckResults []check.CheckResult
 }
 
 func (ir *InputReport) MarshalJSON() ([]byte, error) {
@@ -19,6 +19,6 @@ func (ir *InputReport) MarshalJSON() ([]byte, error) {
 	}{
 		Path:          ir.Input.Path(),
 		DetectedTypes: ir.Input.DetectedTypes(),
-		Checks:        ir.Checks,
+		Checks:        ir.CheckResults,
 	})
 }

@@ -8,11 +8,11 @@ type Position struct {
 }
 
 func (p *Position) IsEmpty() bool {
-	return p.Line == 0 && p.Column == 0
+	return p.Line <= 0 && p.Column <= 0
 }
 
 func (p *Position) MarshalJSON() ([]byte, error) {
-	if p.Column == 0 {
+	if p.Column <= 0 {
 		return json.Marshal(&struct {
 			Line int `json:"line"`
 		}{

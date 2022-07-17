@@ -5,9 +5,9 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/instructions"
 	"github.com/moby/buildkit/frontend/dockerfile/parser"
 	"github.com/oscarbc96/seki/pkg/load"
+	"github.com/oscarbc96/seki/utils"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
-	"strings"
 )
 
 func init() {
@@ -67,6 +67,7 @@ func parseDockerImagesFromStages(stages []instructions.Stage) ([]DockerImage, er
 			digest = canonicalReference.Digest().String()
 		}
 
+		cmdLocation := stage.Location[0] // TODO validate the hardcoded 0
 		dockerImages = append(dockerImages, DockerImage{
 			Digest:   digest,
 			Image:    reference.Path(ref),
@@ -75,12 +76,12 @@ func parseDockerImagesFromStages(stages []instructions.Stage) ([]DockerImage, er
 			Tag:      ref.(reference.Tagged).Tag(),
 			Location: load.Range{
 				Start: load.Position{
-					Line:   stage.Location[0].Start.Line, // TODO validate the hardcoded 0
-					Column: stage.Location[0].Start.Character,
+					Line:   cmdLocation.Start.Line,
+					Column: cmdLocation.Start.Character,
 				},
 				End: load.Position{
-					Line:   stage.Location[0].End.Line,
-					Column: stage.Location[0].End.Character,
+					Line:   cmdLocation.End.Line,
+					Column: cmdLocation.End.Character,
 				},
 			},
 		})
@@ -96,7 +97,7 @@ func (ContainersDockerfileDockerHubRateLimit) Name() string { return "Name" }
 
 func (ContainersDockerfileDockerHubRateLimit) Description() string { return "Description" }
 
-func (ContainersDockerfileDockerHubRateLimit) Severity() Severity { return Medium }
+func (ContainersDockerfileDockerHubRateLimit) Severity() Severity { return Informational }
 
 func (ContainersDockerfileDockerHubRateLimit) Controls() map[string][]string {
 	return map[string][]string{}
@@ -216,14 +217,15 @@ func (c ContainersDockerfileAddExists) Run(f load.Input) CheckResult {
 	for _, stage := range stages {
 		for _, command := range stage.Commands {
 			if _, isAddCommand := command.(*instructions.AddCommand); isAddCommand {
+				cmdLocation := command.Location()[0] // TODO validate the hardcoded 0
 				locations = append(locations, load.Range{
 					Start: load.Position{
-						Line:   command.Location()[0].Start.Line, // TODO validate the hardcoded 0
-						Column: command.Location()[0].Start.Character,
+						Line:   cmdLocation.Start.Line,
+						Column: 1,
 					},
 					End: load.Position{
-						Line:   command.Location()[0].End.Line,
-						Column: command.Location()[0].End.Character,
+						Line:   cmdLocation.End.Line,
+						Column: len("ADD"),
 					},
 				})
 			}
@@ -272,16 +274,16 @@ func (c ContainersDockerfileRootUser) Run(f load.Input) CheckResult {
 		for _, command := range stage.Commands {
 			if command, isUserCommand := command.(*instructions.UserCommand); isUserCommand {
 				if command.User == "root" {
-					strings.Contains("something", "some")
+					colStart, colEnd := utils.FindStartAndEndColumn(command.String(), "root")
 					cmdLocation := command.Location()[0] // TODO validate the hardcoded 0
 					locations = append(locations, load.Range{
 						Start: load.Position{
 							Line:   cmdLocation.Start.Line,
-							Column: cmdLocation.Start.Character,
+							Column: colStart,
 						},
 						End: load.Position{
 							Line:   cmdLocation.End.Line,
-							Column: cmdLocation.End.Character,
+							Column: colEnd,
 						},
 					})
 				}
