@@ -85,7 +85,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringP("loggingLevel", "l", zerolog.LevelInfoValue, "set the logging level")
+	rootCmd.PersistentFlags().StringP("loggingLevel", "l", zerolog.LevelWarnValue, "set the logging level")
 	rootCmd.Flags().StringP("format", "f", report.DefaultFormat, "set the output format")
 }
 
