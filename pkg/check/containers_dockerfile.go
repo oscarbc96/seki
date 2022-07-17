@@ -105,16 +105,16 @@ func (ContainersDockerfileDockerHubRateLimit) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (ContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 	defer file.Close()
 
 	dockerLayers, err := parseDockerStages(file)
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 
 	var locations []load.Range
@@ -124,10 +124,10 @@ func (ContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResult, er
 		}
 	}
 	if len(locations) != 0 {
-		return NewFailCheckResult(locations), nil
+		return NewFailCheckResult(c, locations), nil
 	}
 
-	return NewPassCheckResult(), nil
+	return NewPassCheckResult(c), nil
 }
 
 type ContainersDockerfileLatestTag struct{}
@@ -154,16 +154,16 @@ func (ContainersDockerfileLatestTag) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (ContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 	defer file.Close()
 
 	dockerLayers, err := parseDockerStages(file)
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 
 	var locations []load.Range
@@ -173,10 +173,10 @@ func (ContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error) {
 		}
 	}
 	if len(locations) != 0 {
-		return NewFailCheckResult(locations), nil
+		return NewFailCheckResult(c, locations), nil
 	}
 
-	return NewPassCheckResult(), nil
+	return NewPassCheckResult(c), nil
 }
 
 type ContainersDockerfileAddExists struct{}
@@ -203,21 +203,21 @@ func (ContainersDockerfileAddExists) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (ContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 	defer file.Close()
 
 	parsedDockerfile, err := parser.Parse(file)
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 
 	stages, _, err := instructions.Parse(parsedDockerfile.AST)
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 
 	var locations []load.Range
@@ -239,10 +239,10 @@ func (ContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
 	}
 
 	if len(locations) != 0 {
-		return NewFailCheckResult(locations), nil
+		return NewFailCheckResult(c, locations), nil
 	}
 
-	return NewPassCheckResult(), nil
+	return NewPassCheckResult(c), nil
 }
 
 type ContainersDockerfileRootUser struct{}
@@ -269,21 +269,21 @@ func (ContainersDockerfileRootUser) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
+func (c ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
 	file, err := f.Open()
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 	defer file.Close()
 
 	parsedDockerfile, err := parser.Parse(file)
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 
 	stages, _, err := instructions.Parse(parsedDockerfile.AST)
 	if err != nil {
-		return NewSkipCheckResult(), err
+		return NewSkipCheckResult(c), err
 	}
 
 	var locations []load.Range
@@ -307,8 +307,8 @@ func (ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
 	}
 
 	if len(locations) != 0 {
-		return NewFailCheckResult(locations), nil
+		return NewFailCheckResult(c, locations), nil
 	}
 
-	return NewPassCheckResult(), nil
+	return NewPassCheckResult(c), nil
 }
