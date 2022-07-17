@@ -2,11 +2,10 @@ package report
 
 import (
 	"encoding/json"
-	"github.com/oscarbc96/seki/pkg/run"
 )
 
-func JSONFormat(results []run.Output) (string, error) {
-	jsonOutput, err := json.MarshalIndent(results, "", "  ")
+func JSONFormatter(input_reports []InputReport) (string, error) {
+	jsonOutput, err := json.MarshalIndent(input_reports, "", "  ")
 	if err != nil {
 		return "", err
 	}

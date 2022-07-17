@@ -4,13 +4,14 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
 	"regexp"
 	"strings"
 )
 
-// curl -o reference.json https://raw.githubusercontent.com/fluggo/aws-service-auth-reference/master/service-auth.json
-//go:generate bash -c "curl https://raw.githubusercontent.com/fluggo/aws-service-auth-reference/master/service-auth.json | jq -c > reference.json"
+//go:generate curl -o reference.json https://raw.githubusercontent.com/fluggo/aws-service-auth-reference/master/service-auth.json
+// bash -c "curl https://raw.githubusercontent.com/fluggo/aws-service-auth-reference/master/service-auth.json | jq -c > reference.json"
 
 //go:embed reference.json
 var referenceRaw []byte
@@ -18,8 +19,10 @@ var reference []ServiceAuthorizationReference
 var actions []string
 
 func init() {
-	json.Unmarshal(referenceRaw, &reference)
-
+	err := json.Unmarshal(referenceRaw, &reference)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Could not load AWS reference")
+	}
 	for _, service := range reference {
 		for _, action := range service.Actions {
 			actions = append(actions, fmt.Sprintf("%s:%s", service.ServicePrefix, action.Name))
@@ -75,13 +78,18 @@ func GetAllActions() []string {
 }
 
 func ExpandActions(action string) ([]string, error) {
+	log.Debug().Str("action", action)
+
 	// Replace *
 	action = strings.Replace(action, "*", ".*", -1)
 
 	// Replace ?
 	action = strings.Replace(action, "?", ".{1}", -1)
 
-	pattern, err := regexp.Compile(fmt.Sprintf("(?i)^%s$", action))
+	patternStr := fmt.Sprintf("(?i)^%s$", action)
+	log.Debug().Str("pattern", patternStr)
+
+	pattern, err := regexp.Compile(patternStr)
 	if err != nil {
 		return nil, err
 	}

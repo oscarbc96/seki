@@ -1,12 +1,12 @@
 package report
 
 import (
-	"fmt"
-	"github.com/oscarbc96/seki/pkg/run"
+	"encoding/json"
+	"github.com/pkg/errors"
 	"strings"
 )
 
-type Formater func(r []run.Output) (string, error)
+type Formatter func(input_reports []InputReport) (string, error)
 
 type Format int
 
@@ -14,30 +14,34 @@ const (
 	JSON Format = iota
 )
 
-var FormatIDs = map[Format][]string{
-	JSON: {"json"},
+var formatToString = map[Format]string{
+	JSON: "json",
 }
 
-var DefaultFormat = FormatIDs[JSON][0]
+var DefaultFormat = formatToString[JSON]
 
-func FormatFromString(name string) (Format, error) {
-	lower := strings.ToLower(name)
-	for f, ids := range FormatIDs {
-		for _, i := range ids {
-			if lower == i {
-				return f, nil
-			}
-		}
-	}
-	return -1, fmt.Errorf("Unknown Format: '%s'", name)
+func (f Format) String() string {
+	return formatToString[f]
 }
 
-func GetFormater(f Format) (Formater, error) {
+func (f Format) MarshalJSON() ([]byte, error) {
+	return json.Marshal(f.String())
+}
+
+func (f Format) GetFormatter() Formatter {
 	switch f {
 	case JSON:
-		return JSONFormat, nil
-
-	default:
-		return nil, fmt.Errorf("Unrecognized formater: %s", FormatIDs[f])
+		return JSONFormatter
 	}
+	return nil
+}
+
+func FormatterFromString(name string) (Formatter, error) {
+	lower := strings.ToLower(name)
+	for format, id := range formatToString {
+		if id == lower {
+			return format.GetFormatter(), nil
+		}
+	}
+	return nil, errors.New("Unknown Format")
 }

@@ -16,6 +16,10 @@ var (
 	afs           = &afero.Afero{Fs: cacheOnReadFS}
 )
 
+func PathExists(path string) (bool, error) {
+	return afs.Exists(path)
+}
+
 type Input struct {
 	path           string
 	info           os.FileInfo
@@ -61,7 +65,7 @@ func (i *Input) DetectedTypes() []DetectedType {
 }
 
 func FlatPathsToInputs(paths []string) ([]Input, error) {
-	result := []Input{}
+	var inputs []Input
 	for _, path := range paths {
 		err := afs.Walk(path, func(walkPath string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -78,17 +82,18 @@ func FlatPathsToInputs(paths []string) ([]Input, error) {
 				return err
 			}
 
-			detectedTypes := detectTypesOfInput(Input{path: absPath, info: info})
-			if len(detectedTypes) != 0 {
-				result = append(result, Input{path: absPath, info: info, detected_types: detectedTypes})
-			}
-
+			inputs = append(inputs, Input{path: absPath, info: info})
 			return nil
 		})
 		if err != nil {
 			return nil, err
 		}
 	}
-	uniq := lo.UniqBy[Input, string](result, func(f Input) string { return f.path })
-	return uniq, nil
+	uniqInputs := lo.UniqBy[Input, string](inputs, func(f Input) string { return f.path })
+
+	for idx, input := range uniqInputs {
+		uniqInputs[idx].detected_types = detectTypesOfInput(input)
+	}
+
+	return uniqInputs, nil
 }

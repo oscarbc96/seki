@@ -14,7 +14,7 @@ type Check interface {
 	Tags() []string
 	RemediationDoc() string
 	InputTypes() []load.DetectedType
-	Run(f load.Input) (*Result, error)
+	Run(f load.Input) (CheckResult, error)
 }
 
 var allChecks = []Check{}

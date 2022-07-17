@@ -5,29 +5,22 @@ import (
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
 	"github.com/oscarbc96/seki/pkg/report"
-	"github.com/oscarbc96/seki/pkg/run"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"os"
-)
-
-var (
-	FS     = afero.NewOsFs()
-	FSUtil = &afero.Afero{Fs: FS}
 )
 
 var rootCmd = &cobra.Command{
 	Use: "seki [flags] [...path]",
 	Args: func(cmd *cobra.Command, args []string) error {
 		for _, path := range args {
-			exists, err := FSUtil.Exists(path)
+			exists, err := load.PathExists(path)
 			if err != nil {
-				return err
+				log.Fatal().Err(err)
 			}
 			if !exists {
-				return fmt.Errorf("path doesn't exist: %s", path)
+				log.Fatal().Str("path", path).Msg("Path does not exist")
 			}
 		}
 		return nil
@@ -36,58 +29,57 @@ var rootCmd = &cobra.Command{
 	SilenceUsage:  true,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		loggingLevelRawValue, err := cmd.Flags().GetString("loggingLevel")
-		CheckErr(err)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Could not get loggingLevel flag")
+		}
 		loggingLevel, err := zerolog.ParseLevel(loggingLevelRawValue)
-		CheckErr(err)
+		if err != nil {
+			log.Fatal().Str("loggingLevelRaw", loggingLevelRawValue).Err(err).Msg("Could not parse logging level")
+		}
 		zerolog.SetGlobalLevel(loggingLevel)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		inputs, _ := load.FlatPathsToInputs(args)
-
-		var outputs []run.Output
-		for _, input := range inputs {
-			output := run.Output{
-				Path:          input.Path(),
-				DetectedTypes: input.DetectedTypes(),
-			}
-			for _, detectedType := range input.DetectedTypes() {
-				chcks := check.GetChecksFor(detectedType)
-				for _, chck := range chcks {
-					result, _ := chck.Run(input)
-
-					checkOutput := run.CheckOutput{
-						Id:             chck.Id(),
-						Name:           chck.Name(),
-						Description:    chck.Description(),
-						Severity:       chck.Severity(),
-						Controls:       chck.Controls(),
-						Tags:           chck.Tags(),
-						RemediationDoc: chck.RemediationDoc(),
-						Status:         result.Status,
-						Context:        result.Context,
-					}
-					for _, location := range result.Location {
-						newCheckOutput := checkOutput
-						checkOutput.Location = location
-						output.Checks = append(output.Checks, newCheckOutput)
-					}
-					if len(result.Location) == 0 {
-						output.Checks = append(output.Checks, checkOutput)
-					}
-
-				}
-			}
-			outputs = append(outputs, output)
+		formatId, err := cmd.Flags().GetString("format")
+		if err != nil {
+			log.Fatal().Err(err).Msg("Could not get format flag")
 		}
 
-		formatRawValue, err := cmd.Flags().GetString("format")
-		CheckErr(err)
-		format, err := report.FormatFromString(formatRawValue)
-		CheckErr(err)
-		formater, err := report.GetFormater(format)
+		formatter, err := report.FormatterFromString(formatId)
+		if err != nil {
+			log.Fatal().Str("format", formatId).Err(err).Msg("Could not get formatter")
+		}
 
-		output, err := formater(outputs)
-		CheckErr(err)
+		paths := args
+		if len(paths) == 0 {
+			log.Info().Msg("Path not specified, using current working directory")
+			cwd, err := os.Getwd()
+			if err != nil {
+				log.Fatal().Err(err).Msg("Could not get current working directory")
+			}
+			paths = append(paths, cwd)
+		}
+		inputs, _ := load.FlatPathsToInputs(paths)
+
+		var reports []report.InputReport
+		for _, input := range inputs {
+			inputReport := report.InputReport{Input: input}
+			for _, detectedType := range input.DetectedTypes() {
+				for _, chck := range check.GetChecksFor(detectedType) {
+					result, _ := chck.Run(input)
+
+					inputReport.Checks = append(inputReport.Checks, result)
+				}
+			}
+			if len(inputReport.Checks) > 0 {
+				reports = append(reports, inputReport)
+			}
+		}
+
+		output, err := formatter(reports)
+		if err != nil {
+			log.Error().Str("format", formatId).Err(err).Msg("Could not format")
+		}
+
 		fmt.Print(output)
 	},
 }
@@ -97,14 +89,10 @@ func init() {
 	rootCmd.Flags().StringP("format", "f", report.DefaultFormat, "set the output format")
 }
 
-func CheckErr(msg interface{}) {
-	if msg != nil {
-		log.Error().Msgf("%s", msg)
-		os.Exit(1)
-	}
-}
-
 func Execute() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
-	CheckErr(rootCmd.Execute())
+	err := rootCmd.Execute()
+	if err != nil {
+		log.Fatal().Err(err)
+	}
 }

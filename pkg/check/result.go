@@ -2,26 +2,26 @@ package check
 
 import "github.com/oscarbc96/seki/pkg/load"
 
-type Result struct {
+type CheckResult struct {
 	Status   Status
 	Location []load.Range
 	Context  map[string]string
 }
 
-func NewSkipResult() *Result {
-	return &Result{
+func NewSkipCheckResult() CheckResult {
+	return CheckResult{
 		Status: SKIP,
 	}
 }
 
-func NewPassResult() *Result {
-	return &Result{
+func NewPassCheckResult() CheckResult {
+	return CheckResult{
 		Status: PASS,
 	}
 }
 
-func NewFailResult(locations []load.Range) *Result {
-	return &Result{
+func NewFailCheckResult(locations []load.Range) CheckResult {
+	return CheckResult{
 		Status:   FAIL,
 		Location: locations,
 	}
