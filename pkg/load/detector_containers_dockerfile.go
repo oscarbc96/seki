@@ -27,12 +27,12 @@ func (DetectorContainersDockerfile) Detect(input Input) (DetectedType, error) {
 		return DetectedUnknown, nil
 	}
 
-	file, err := input.Open()
+	reader, err := input.Open()
 	if err != nil {
 		return DetectedUnknown, err
 	}
-	defer file.Close()
-	parsedDockerfile, err := parser.Parse(file)
+	defer reader.Close()
+	parsedDockerfile, err := parser.Parse(reader)
 	if err != nil {
 		return DetectedUnknown, err
 	}

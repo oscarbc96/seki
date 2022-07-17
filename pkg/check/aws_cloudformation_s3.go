@@ -29,7 +29,9 @@ func (AWSCloudformationS3BucketPublicReadAcl) Controls() map[string][]string {
 
 func (AWSCloudformationS3BucketPublicReadAcl) Tags() []string { return []string{} }
 
-func (AWSCloudformationS3BucketPublicReadAcl) RemediationDoc() string { return "RemediationDoc" }
+func (AWSCloudformationS3BucketPublicReadAcl) RemediationDoc() string {
+	return "https://sekisecurity.com/docs/"
+}
 
 func (AWSCloudformationS3BucketPublicReadAcl) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedAwsCloudformation}
@@ -71,7 +73,9 @@ func (AWSCloudformationS3ObjectVersioningRule) Controls() map[string][]string {
 
 func (AWSCloudformationS3ObjectVersioningRule) Tags() []string { return []string{} }
 
-func (AWSCloudformationS3ObjectVersioningRule) RemediationDoc() string { return "RemediationDoc" }
+func (AWSCloudformationS3ObjectVersioningRule) RemediationDoc() string {
+	return "https://sekisecurity.com/docs/"
+}
 
 func (AWSCloudformationS3ObjectVersioningRule) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedAwsCloudformation}

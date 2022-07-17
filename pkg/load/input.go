@@ -1,6 +1,7 @@
 package load
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
@@ -58,6 +59,31 @@ func (i *Input) Open() (afero.File, error) {
 		return nil, fmt.Errorf("It is not a file: %s", i.Path())
 	}
 	return afs.Open(i.Path())
+}
+
+func (i *Input) ReadLines(from, to int) ([]string, error) {
+	reader, err := i.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	var result []string
+	scanner := bufio.NewScanner(reader)
+	n := 0
+	for scanner.Scan() {
+		n++
+		if n < from {
+			continue
+		}
+		if n > to {
+			break
+		}
+
+		result = append(result, scanner.Text())
+	}
+
+	return result, nil
 }
 
 func (i *Input) DetectedTypes() []DetectedType {

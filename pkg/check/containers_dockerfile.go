@@ -105,7 +105,9 @@ func (ContainersDockerfileDockerHubRateLimit) Controls() map[string][]string {
 
 func (ContainersDockerfileDockerHubRateLimit) Tags() []string { return []string{"docker"} }
 
-func (ContainersDockerfileDockerHubRateLimit) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileDockerHubRateLimit) RemediationDoc() string {
+	return "https://sekisecurity.com/docs/"
+}
 
 func (ContainersDockerfileDockerHubRateLimit) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
@@ -153,7 +155,7 @@ func (ContainersDockerfileLatestTag) Controls() map[string][]string {
 
 func (ContainersDockerfileLatestTag) Tags() []string { return []string{"docker"} }
 
-func (ContainersDockerfileLatestTag) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileLatestTag) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
 
 func (ContainersDockerfileLatestTag) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
@@ -201,7 +203,7 @@ func (ContainersDockerfileAddExists) Controls() map[string][]string {
 
 func (ContainersDockerfileAddExists) Tags() []string { return []string{"docker"} }
 
-func (ContainersDockerfileAddExists) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileAddExists) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
 
 func (ContainersDockerfileAddExists) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
@@ -257,7 +259,7 @@ func (ContainersDockerfileRootUser) Controls() map[string][]string {
 
 func (ContainersDockerfileRootUser) Tags() []string { return []string{"docker"} }
 
-func (ContainersDockerfileRootUser) RemediationDoc() string { return "RemediationDoc" }
+func (ContainersDockerfileRootUser) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
 
 func (ContainersDockerfileRootUser) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}

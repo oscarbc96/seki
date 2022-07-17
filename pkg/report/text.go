@@ -56,7 +56,23 @@ func TextFormatter(input_reports []InputReport) (string, error) {
 			result = append(result, getStatusColor(status).Sprint(status))
 			result = append(result, " ")
 			result = append(result, text.Reset.Sprint(checkResult.Check.Name()))
+			result = append(result, " ")
+			result = append(result, text.FgHiCyan.Sprint(checkResult.Check.RemediationDoc()))
 			result = append(result, "\n")
+
+			for _, loc := range checkResult.Locations {
+				if loc.IsEmpty() {
+					continue
+				}
+
+				code, _ := input_report.Input.ReadLines(loc.Start.Line, loc.End.Line)
+				for idx, line := range code {
+					result = append(result, text.Bold.Sprintf("%v", loc.Start.Line+idx))
+					result = append(result, " ")
+					result = append(result, text.BgHiBlack.Sprint(line))
+					result = append(result, "\n")
+				}
+			}
 
 			if !checkResult.Err.IsEmpty() {
 				result = append(result, text.FgHiRed.Sprint("Error from the check:\n"))
