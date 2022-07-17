@@ -7,7 +7,7 @@ import (
 	"github.com/oscarbc96/seki/pkg/load"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
-	"io"
+	"strings"
 )
 
 func init() {
@@ -20,7 +20,7 @@ func init() {
 	)
 }
 
-type DockerStage struct {
+type DockerImage struct {
 	Digest   string
 	Image    string
 	Platform string
@@ -29,25 +29,30 @@ type DockerStage struct {
 	Location load.Range
 }
 
-func parseDockerStages(file io.Reader) ([]DockerStage, error) {
-	parsedDockerfile, err := parser.Parse(file)
+func parseDockerInstructions(f load.Input) (stages []instructions.Stage, metaArgs []instructions.ArgCommand, err error) {
+	reader, err := f.Open()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+	defer reader.Close()
+
+	parsedDockerfile, err := parser.Parse(reader)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	stages, _, err := instructions.Parse(parsedDockerfile.AST)
-	if err != nil {
-		return nil, err
-	}
+	return instructions.Parse(parsedDockerfile.AST)
+}
 
-	layerNames := lo.Map[instructions.Stage, string](stages, func(stage instructions.Stage, _ int) string {
+func parseDockerImagesFromStages(stages []instructions.Stage) ([]DockerImage, error) {
+	stageNames := lo.Map[instructions.Stage, string](stages, func(stage instructions.Stage, _ int) string {
 		return stage.Name
 	})
 
-	var matches []DockerStage
+	var matches []DockerImage
 	for _, stage := range stages {
 		// Ignoring if stage inherits from a previous stage
-		if lo.Contains[string](layerNames, stage.BaseName) {
+		if lo.Contains[string](stageNames, stage.BaseName) {
 			continue
 		}
 
@@ -62,7 +67,7 @@ func parseDockerStages(file io.Reader) ([]DockerStage, error) {
 			digest = canonicalReference.Digest().String()
 		}
 
-		matches = append(matches, DockerStage{
+		matches = append(matches, DockerImage{
 			Digest:   digest,
 			Image:    reference.Path(ref),
 			Platform: stage.Platform,
@@ -106,19 +111,18 @@ func (ContainersDockerfileDockerHubRateLimit) InputTypes() []load.DetectedType {
 }
 
 func (c ContainersDockerfileDockerHubRateLimit) Run(f load.Input) (CheckResult, error) {
-	file, err := f.Open()
+	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
 		return NewSkipCheckResult(c), err
 	}
-	defer file.Close()
 
-	dockerLayers, err := parseDockerStages(file)
+	dockerImages, err := parseDockerImagesFromStages(stages)
 	if err != nil {
 		return NewSkipCheckResult(c), err
 	}
 
 	var locations []load.Range
-	for _, layer := range dockerLayers {
+	for _, layer := range dockerImages {
 		if layer.Registry == "docker.io" {
 			locations = append(locations, layer.Location)
 		}
@@ -155,19 +159,18 @@ func (ContainersDockerfileLatestTag) InputTypes() []load.DetectedType {
 }
 
 func (c ContainersDockerfileLatestTag) Run(f load.Input) (CheckResult, error) {
-	file, err := f.Open()
+	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
 		return NewSkipCheckResult(c), err
 	}
-	defer file.Close()
 
-	dockerLayers, err := parseDockerStages(file)
+	dockerImages, err := parseDockerImagesFromStages(stages)
 	if err != nil {
 		return NewSkipCheckResult(c), err
 	}
 
 	var locations []load.Range
-	for _, layer := range dockerLayers {
+	for _, layer := range dockerImages {
 		if layer.Tag == "latest" {
 			locations = append(locations, layer.Location)
 		}
@@ -204,18 +207,7 @@ func (ContainersDockerfileAddExists) InputTypes() []load.DetectedType {
 }
 
 func (c ContainersDockerfileAddExists) Run(f load.Input) (CheckResult, error) {
-	file, err := f.Open()
-	if err != nil {
-		return NewSkipCheckResult(c), err
-	}
-	defer file.Close()
-
-	parsedDockerfile, err := parser.Parse(file)
-	if err != nil {
-		return NewSkipCheckResult(c), err
-	}
-
-	stages, _, err := instructions.Parse(parsedDockerfile.AST)
+	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
 		return NewSkipCheckResult(c), err
 	}
@@ -270,18 +262,7 @@ func (ContainersDockerfileRootUser) InputTypes() []load.DetectedType {
 }
 
 func (c ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
-	file, err := f.Open()
-	if err != nil {
-		return NewSkipCheckResult(c), err
-	}
-	defer file.Close()
-
-	parsedDockerfile, err := parser.Parse(file)
-	if err != nil {
-		return NewSkipCheckResult(c), err
-	}
-
-	stages, _, err := instructions.Parse(parsedDockerfile.AST)
+	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
 		return NewSkipCheckResult(c), err
 	}
@@ -291,14 +272,16 @@ func (c ContainersDockerfileRootUser) Run(f load.Input) (CheckResult, error) {
 		for _, command := range stage.Commands {
 			if command, isUserCommand := command.(*instructions.UserCommand); isUserCommand {
 				if command.User == "root" {
+					strings.Contains("something", "some")
+					cmdLocation := command.Location()[0] // TODO validate the hardcoded 0
 					locations = append(locations, load.Range{
 						Start: load.Position{
-							Line:   command.Location()[0].Start.Line, // TODO validate the hardcoded 0
-							Column: command.Location()[0].Start.Character,
+							Line:   cmdLocation.Start.Line,
+							Column: cmdLocation.Start.Character,
 						},
 						End: load.Position{
-							Line:   command.Location()[0].End.Line,
-							Column: command.Location()[0].End.Character,
+							Line:   cmdLocation.End.Line,
+							Column: cmdLocation.End.Character,
 						},
 					})
 				}
