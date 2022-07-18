@@ -273,30 +273,36 @@ func (c ContainersDockerfileRootUser) Run(f load.Input) CheckResult {
 		return NewSkipCheckResultWithError(c, err)
 	}
 
-	var locations []load.Range
-	for _, stage := range stages {
-		for _, command := range stage.Commands {
-			if command, isUserCommand := command.(*instructions.UserCommand); isUserCommand {
-				if command.User == "root" {
-					colStart, colEnd := utils.FindStartAndEndColumn(command.String(), "root")
-					cmdLocation := command.Location()[0] // TODO validate the hardcoded 0
-					locations = append(locations, load.Range{
-						Start: load.Position{
-							Line:   cmdLocation.Start.Line,
-							Column: colStart,
-						},
-						End: load.Position{
-							Line:   cmdLocation.End.Line,
-							Column: colEnd,
-						},
-					})
-				}
-			}
+	lastStage := stages[len(stages)-1]
+
+	userCommands := lo.FilterMap[instructions.Command, instructions.UserCommand](lastStage.Commands, func(command instructions.Command, _ int) (instructions.UserCommand, bool) {
+		if userCommand, isUserCommand := command.(*instructions.UserCommand); isUserCommand {
+			return *userCommand, true
 		}
+		return instructions.UserCommand{}, false
+	})
+
+	if len(userCommands) == 0 {
+		return NewPassCheckResult(c)
 	}
 
-	if len(locations) != 0 {
-		return NewFailCheckResult(c, locations)
+	lastUserCommand := userCommands[len(userCommands)-1]
+	if lastUserCommand.User == "root" {
+		colStart, colEnd := utils.FindStartAndEndColumn(lastUserCommand.String(), "root")
+		cmdLocation := lastUserCommand.Location()[0] // TODO validate the hardcoded 0
+
+		return NewFailCheckResult(c, []load.Range{
+			{
+				Start: load.Position{
+					Line:   cmdLocation.Start.Line,
+					Column: colStart,
+				},
+				End: load.Position{
+					Line:   cmdLocation.End.Line,
+					Column: colEnd,
+				},
+			},
+		})
 	}
 
 	return NewPassCheckResult(c)
