@@ -51,10 +51,10 @@ func (c AWSCloudformationS3BucketPublicReadAcl) Run(f load.Input) CheckResult {
 			locations = append(locations, load.Range{}) // TODO implement range
 		} else {
 			pabc := resource.PublicAccessBlockConfiguration
-			if (pabc.BlockPublicAcls == nil || *pabc.BlockPublicAcls == false) ||
-				(pabc.BlockPublicPolicy == nil || *pabc.BlockPublicPolicy == false) ||
-				(pabc.IgnorePublicAcls == nil || *pabc.IgnorePublicAcls == false) ||
-				(pabc.RestrictPublicBuckets == nil || *pabc.RestrictPublicBuckets == false) {
+			if (pabc.BlockPublicAcls == nil || !*pabc.BlockPublicAcls) ||
+				(pabc.BlockPublicPolicy == nil || !*pabc.BlockPublicPolicy) ||
+				(pabc.IgnorePublicAcls == nil || !*pabc.IgnorePublicAcls) ||
+				(pabc.RestrictPublicBuckets == nil || !*pabc.RestrictPublicBuckets) {
 				locations = append(locations, load.Range{}) // TODO implement range
 			}
 		}

@@ -1,8 +1,11 @@
 package report
 
 import (
+	"fmt"
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/oscarbc96/seki/pkg/check"
+	"github.com/samber/lo"
+	"strconv"
 	"strings"
 )
 
@@ -44,33 +47,47 @@ func TextFormatter(input_reports []InputReport) (string, error) {
 			result = append(result, text.BgHiMagenta.Sprint(detectedType))
 			result = append(result, " ")
 		}
-		result = append(result, text.Bold.Sprint(input_report.Input.Path()))
-		result = append(result, "\n")
+		result = append(result, text.Bold.Sprintf("%s\n", input_report.Input.Path()))
 		for _, checkResult := range input_report.CheckResults {
 			severity := checkResult.Check.Severity()
 			status := checkResult.Status
+
 			result = append(result, text.FgHiBlue.Sprint(checkResult.Check.Id()))
 			result = append(result, " ")
 			result = append(result, getSeverityColor(severity).Sprintf("[%s]", severity))
 			result = append(result, " ")
 			result = append(result, getStatusColor(status).Sprint(status))
 			result = append(result, " ")
-			result = append(result, text.Reset.Sprint(checkResult.Check.Name()))
+			result = append(result, checkResult.Check.Name())
 			result = append(result, " ")
 			result = append(result, text.FgHiCyan.Sprint(checkResult.Check.RemediationDoc()))
 			result = append(result, "\n")
 
-			for _, loc := range checkResult.Locations {
+			for idx, loc := range checkResult.Locations {
 				if loc.IsEmpty() {
 					continue
 				}
+				result = append(result, fmt.Sprintf("Match %v:\n", idx+1))
 
-				code, _ := input_report.Input.ReadLines(loc.Start.Line, loc.End.Line)
+				codeStartLine := lo.Max[int]([]int{1, loc.Start.Line - 2})
+				codeEndLine := loc.End.Line + 2
+				code, _ := input_report.Input.ReadLines(codeStartLine, codeEndLine)
 				for idx, line := range code {
-					result = append(result, text.Bold.Sprintf("%v", loc.Start.Line+idx))
-					result = append(result, " ")
-					result = append(result, text.BgHiBlack.Sprint(line))
+					currentLine := codeStartLine + idx
+					shouldHighlight := currentLine >= loc.Start.Line && currentLine <= loc.End.Line
+					color := text.Colors{}
+					if shouldHighlight {
+						color = text.Colors{text.BgWhite, text.FgHiBlack}
+					}
+					result = append(
+						result,
+						color.Sprintf(" %s | %s", text.AlignRight.Apply(strconv.Itoa(currentLine), 3), line),
+					)
 					result = append(result, "\n")
+				}
+				foundEOF := len(code) <= (codeEndLine - codeStartLine)
+				if foundEOF {
+					result = append(result, text.FgHiRed.Sprint("       EOF\n"))
 				}
 			}
 
