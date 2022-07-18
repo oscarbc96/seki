@@ -44,7 +44,7 @@ func TextFormatter(input_reports []InputReport) (string, error) {
 
 	for _, input_report := range input_reports {
 		for _, detectedType := range input_report.Input.DetectedTypes() {
-			result = append(result, text.BgHiMagenta.Sprint(detectedType))
+			result = append(result, text.Colors{text.BgHiMagenta, text.FgBlack}.Sprint(detectedType))
 			result = append(result, " ")
 		}
 		result = append(result, text.Bold.Sprintf("%s\n", input_report.Input.Path()))
