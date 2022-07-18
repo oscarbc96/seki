@@ -2,6 +2,7 @@ package check
 
 import (
 	"github.com/samber/lo"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -11,7 +12,5 @@ func TestCheckIdsAreUnique(t *testing.T) {
 	})
 	duplicatedIds := lo.FindDuplicates[string](ids)
 
-	if len(duplicatedIds) != 0 {
-		t.Errorf("Found %v duplicated", duplicatedIds)
-	}
+	assert.Empty(t, duplicatedIds, "Found %v duplicated", duplicatedIds)
 }
