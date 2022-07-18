@@ -93,7 +93,9 @@ type ContainersDockerfileDockerHubRateLimit struct{}
 
 func (ContainersDockerfileDockerHubRateLimit) Id() string { return "SK_3" }
 
-func (ContainersDockerfileDockerHubRateLimit) Name() string { return "Name" }
+func (ContainersDockerfileDockerHubRateLimit) Name() string {
+	return "Ensure the registry is not empty nor docker.io"
+}
 
 func (ContainersDockerfileDockerHubRateLimit) Description() string { return "Description" }
 

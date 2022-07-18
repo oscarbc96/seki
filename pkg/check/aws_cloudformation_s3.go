@@ -17,7 +17,9 @@ type AWSCloudformationS3BucketPublicReadAcl struct{}
 
 func (AWSCloudformationS3BucketPublicReadAcl) Id() string { return "SK_1" }
 
-func (AWSCloudformationS3BucketPublicReadAcl) Name() string { return "Name" }
+func (AWSCloudformationS3BucketPublicReadAcl) Name() string {
+	return "Ensure S3 bucket has all \"block public access\" options enabled"
+}
 
 func (AWSCloudformationS3BucketPublicReadAcl) Description() string { return "Description" }
 
@@ -45,8 +47,16 @@ func (c AWSCloudformationS3BucketPublicReadAcl) Run(f load.Input) CheckResult {
 
 	var locations []load.Range
 	for _, resource := range template.GetAllS3BucketResources() {
-		if resource.AccessControl != nil && *resource.AccessControl == "PublicRead" {
+		if resource.PublicAccessBlockConfiguration == nil {
 			locations = append(locations, load.Range{}) // TODO implement range
+		} else {
+			pabc := resource.PublicAccessBlockConfiguration
+			if (pabc.BlockPublicAcls == nil || *pabc.BlockPublicAcls == false) ||
+				(pabc.BlockPublicPolicy == nil || *pabc.BlockPublicPolicy == false) ||
+				(pabc.IgnorePublicAcls == nil || *pabc.IgnorePublicAcls == false) ||
+				(pabc.RestrictPublicBuckets == nil || *pabc.RestrictPublicBuckets == false) {
+				locations = append(locations, load.Range{}) // TODO implement range
+			}
 		}
 	}
 
@@ -61,9 +71,13 @@ type AWSCloudformationS3ObjectVersioningRule struct{}
 
 func (AWSCloudformationS3ObjectVersioningRule) Id() string { return "SK_2" }
 
-func (AWSCloudformationS3ObjectVersioningRule) Name() string { return "Name" }
+func (AWSCloudformationS3ObjectVersioningRule) Name() string {
+	return "Ensure S3 bucket versioning is enabled"
+}
 
-func (AWSCloudformationS3ObjectVersioningRule) Description() string { return "Description" }
+func (AWSCloudformationS3ObjectVersioningRule) Description() string {
+	return "S3 bucket versioning is used to protect data availability and integrity. By enabling object versioning, data is protected from overwrites and deletions."
+}
 
 func (AWSCloudformationS3ObjectVersioningRule) Severity() Severity { return Medium }
 
