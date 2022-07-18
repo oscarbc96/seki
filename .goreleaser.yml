@@ -3,7 +3,6 @@ project_name: seki
 before:
   hooks:
     - make freeze
-    - make generate
 
 builds:
   - env:
