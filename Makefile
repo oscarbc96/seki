@@ -2,6 +2,10 @@ ifeq (, $(shell which golangci-lint))
 $(warning "could not find golangci-lint in $(PATH), see https://golangci-lint.run/usage/install/#local-installation")
 endif
 
+ifeq (, $(shell which goreleaser))
+$(warning "could not find golangci-lint in $(PATH), see https://goreleaser.com/install/")
+endif
+
 .PHONY: format lint test build install freeze freeze-upgrade generate
 
 default: all
