@@ -3,7 +3,7 @@ module github.com/oscarbc96/seki
 go 1.18
 
 require (
-	github.com/awslabs/goformation/v6 v6.6.4
+	github.com/awslabs/goformation/v6 v6.6.6
 	github.com/distribution/distribution v2.8.1+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.3.6
 	github.com/moby/buildkit v0.10.3
