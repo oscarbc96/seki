@@ -6,7 +6,7 @@ require (
 	github.com/awslabs/goformation/v6 v6.6.4
 	github.com/distribution/distribution v2.8.1+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.3.6
-	github.com/moby/buildkit v0.10.3
+	github.com/moby/buildkit v0.10.4
 	github.com/rs/zerolog v1.27.0
 	github.com/samber/lo v1.27.0
 	github.com/spf13/afero v1.9.2
