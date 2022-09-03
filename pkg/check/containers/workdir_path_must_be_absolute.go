@@ -8,31 +8,31 @@ import (
 	"path/filepath"
 )
 
-type WorkDirPathIsNotRelative struct{}
+type WorkdirPathMustBeAbsolute struct{}
 
-func (WorkDirPathIsNotRelative) Id() string { return "SK_7" }
+func (WorkdirPathMustBeAbsolute) Id() string { return "SK_7" }
 
-func (WorkDirPathIsNotRelative) Name() string {
+func (WorkdirPathMustBeAbsolute) Name() string {
 	return "WORKDIR path must be absolute"
 }
 
-func (WorkDirPathIsNotRelative) Description() string { return "Description" }
+func (WorkdirPathMustBeAbsolute) Description() string { return "Description" }
 
-func (WorkDirPathIsNotRelative) Severity() check.Severity { return check.Medium }
+func (WorkdirPathMustBeAbsolute) Severity() check.Severity { return check.Medium }
 
-func (WorkDirPathIsNotRelative) Controls() map[string][]string {
+func (WorkdirPathMustBeAbsolute) Controls() map[string][]string {
 	return map[string][]string{}
 }
 
-func (WorkDirPathIsNotRelative) Tags() []string { return []string{"docker"} }
+func (WorkdirPathMustBeAbsolute) Tags() []string { return []string{"docker"} }
 
-func (WorkDirPathIsNotRelative) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
+func (WorkdirPathMustBeAbsolute) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
 
-func (WorkDirPathIsNotRelative) InputTypes() []load.DetectedType {
+func (WorkdirPathMustBeAbsolute) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
 }
 
-func (c WorkDirPathIsNotRelative) Run(f load.Input) check.CheckResult {
+func (c WorkdirPathMustBeAbsolute) Run(f load.Input) check.CheckResult {
 	stages, _, err := parseDockerInstructions(f)
 	if err != nil {
 		return check.NewSkipCheckResultWithError(c, err)

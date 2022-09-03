@@ -39,7 +39,7 @@ func TestGetChecksFor(t *testing.T) {
 				new(containers.LatestTagIsNotUsed),
 				new(containers.PreferCopyOverAdd),
 				new(containers.LastUserIsNotRoot),
-				new(containers.WorkDirPathIsNotRelative),
+				new(containers.WorkdirPathMustBeAbsolute),
 			},
 		},
 	}

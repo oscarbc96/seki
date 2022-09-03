@@ -14,7 +14,7 @@ func init() {
 	load.AFS = &afero.Afero{Fs: afero.NewMemMapFs()}
 }
 
-func TestWorkDirPathIsNotRelative(t *testing.T) {
+func TestWorkdirPathIsNotRelative(t *testing.T) {
 	tests := []struct {
 		name    string
 		content []byte
@@ -28,7 +28,7 @@ COPY . /app
 RUN make /app
 CMD python /app/app.py`),
 			want: check.CheckResult{
-				Check:  WorkDirPathIsNotRelative{},
+				Check:  WorkdirPathMustBeAbsolute{},
 				Status: check.PASS,
 			},
 		},
@@ -41,7 +41,7 @@ USER root
 RUN make /app
 CMD python /app/app.py`),
 			want: check.CheckResult{
-				Check:  WorkDirPathIsNotRelative{},
+				Check:  WorkdirPathMustBeAbsolute{},
 				Status: check.FAIL,
 				Locations: check.Locations{
 					load.Range{
@@ -63,7 +63,7 @@ CMD python /app/app.py`),
 				log.Fatal().Err(err)
 			}
 
-			c := new(WorkDirPathIsNotRelative)
+			c := new(WorkdirPathMustBeAbsolute)
 			assert.Equal(t, tt.want, c.Run(*load.NewInput("Dockerfile", nil)))
 		})
 	}
