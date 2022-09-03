@@ -14,17 +14,30 @@ var (
 	layerMemFS    = afero.NewMemMapFs()
 	roBaseFS      = afero.NewReadOnlyFs(baseOSFS)
 	cacheOnReadFS = afero.NewCacheOnReadFs(roBaseFS, layerMemFS, 0) // 0 means unlimited layerMemFS time
-	afs           = &afero.Afero{Fs: cacheOnReadFS}
+	AFS           = &afero.Afero{Fs: cacheOnReadFS}
 )
 
 func PathExists(path string) (bool, error) {
-	return afs.Exists(path)
+	return AFS.Exists(path)
 }
 
 type Input struct {
 	path          string
 	info          os.FileInfo
 	detectedTypes []DetectedType
+}
+
+func NewInput(path string, info os.FileInfo) *Input {
+	p := new(Input)
+
+	p.path = path
+
+	if info == nil {
+		info, _ = AFS.Stat(path)
+	}
+	p.info = info
+
+	return p
 }
 
 func (i *Input) Path() string {
@@ -51,14 +64,14 @@ func (i *Input) Contents() ([]byte, error) {
 	if i.IsDir() {
 		return nil, fmt.Errorf("It is not a file: %s", i.Path())
 	}
-	return afs.ReadFile(i.Path())
+	return AFS.ReadFile(i.Path())
 }
 
 func (i *Input) Open() (afero.File, error) {
 	if i.IsDir() {
 		return nil, fmt.Errorf("It is not a file: %s", i.Path())
 	}
-	return afs.Open(i.Path())
+	return AFS.Open(i.Path())
 }
 
 func (i *Input) ReadLines(from, to int) ([]string, error) {
@@ -93,7 +106,7 @@ func (i *Input) DetectedTypes() []DetectedType {
 func FlatPathsToInputs(paths []string) ([]Input, error) {
 	var inputs []Input
 	for _, path := range paths {
-		err := afs.Walk(path, func(walkPath string, info os.FileInfo, err error) error {
+		err := AFS.Walk(path, func(walkPath string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -108,7 +121,7 @@ func FlatPathsToInputs(paths []string) ([]Input, error) {
 				return err
 			}
 
-			inputs = append(inputs, Input{path: absPath, info: info})
+			inputs = append(inputs, *NewInput(absPath, info))
 			return nil
 		})
 		if err != nil {
