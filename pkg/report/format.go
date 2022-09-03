@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type Formatter func(input_reports []InputReport) (string, error)
+type Formatter func(inputReports []InputReport) (string, error)
 
 type Format int
 

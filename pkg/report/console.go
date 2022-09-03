@@ -39,16 +39,16 @@ func getStatusColor(s check.Status) text.Color {
 	return text.Reset
 }
 
-func ConsoleFormatter(input_reports []InputReport) (string, error) {
+func ConsoleFormatter(inputReports []InputReport) (string, error) {
 	var result []string
 
-	for _, input_report := range input_reports {
-		for _, detectedType := range input_report.Input.DetectedTypes() {
+	for _, inputReport := range inputReports {
+		for _, detectedType := range inputReport.Input.DetectedTypes() {
 			result = append(result, text.Colors{text.BgHiMagenta, text.FgBlack}.Sprint(detectedType))
 			result = append(result, " ")
 		}
-		result = append(result, text.Bold.Sprintf("%s\n", input_report.Input.Path()))
-		for _, checkResult := range input_report.CheckResults {
+		result = append(result, text.Bold.Sprintf("%s\n", inputReport.Input.Path()))
+		for _, checkResult := range inputReport.CheckResults {
 			severity := checkResult.Check.Severity()
 			status := checkResult.Status
 
@@ -71,7 +71,7 @@ func ConsoleFormatter(input_reports []InputReport) (string, error) {
 
 				codeStartLine := lo.Max[int]([]int{1, loc.Start.Line - 2})
 				codeEndLine := loc.End.Line + 2
-				code, _ := input_report.Input.ReadLines(codeStartLine, codeEndLine)
+				code, _ := inputReport.Input.ReadLines(codeStartLine, codeEndLine)
 				for idx, line := range code {
 					currentLine := codeStartLine + idx
 					shouldHighlight := currentLine >= loc.Start.Line && currentLine <= loc.End.Line
