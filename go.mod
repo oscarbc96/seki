@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/awslabs/goformation/v6 v6.10.0
 	github.com/distribution/distribution v2.8.1+incompatible
-	github.com/jedib0t/go-pretty/v6 v6.3.7
+	github.com/jedib0t/go-pretty/v6 v6.3.8
 	github.com/moby/buildkit v0.10.4
 	github.com/rs/zerolog v1.28.0
 	github.com/samber/lo v1.27.1
