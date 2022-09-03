@@ -4,7 +4,7 @@ type Detector interface {
 	Detect(input Input) (DetectedType, error)
 }
 
-var allDetectors = []Detector{}
+var allDetectors []Detector
 
 func detectTypesOfInput(input Input) []DetectedType {
 	var detectedTypes []DetectedType

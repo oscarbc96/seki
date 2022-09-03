@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
 	"github.com/oscarbc96/seki/pkg/report"
+	"github.com/oscarbc96/seki/pkg/run"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -64,7 +64,7 @@ var rootCmd = &cobra.Command{
 		for _, input := range inputs {
 			inputReport := report.InputReport{Input: input}
 			for _, detectedType := range input.DetectedTypes() {
-				for _, chck := range check.GetChecksFor(detectedType) {
+				for _, chck := range run.GetChecksFor(detectedType) {
 					result := chck.Run(input)
 					inputReport.CheckResults = append(inputReport.CheckResults, result)
 				}
