@@ -19,7 +19,7 @@ func TestCheckIdsAreUnique(t *testing.T) {
 }
 
 func TestNumberOfChecks(t *testing.T) {
-	assert.Equal(t, 6, len(AllChecks))
+	assert.Equal(t, 7, len(AllChecks))
 }
 
 func TestGetChecksFor(t *testing.T) {
@@ -39,6 +39,7 @@ func TestGetChecksFor(t *testing.T) {
 				new(containers.LatestTagIsNotUsed),
 				new(containers.PreferCopyOverAdd),
 				new(containers.LastUserIsNotRoot),
+				new(containers.WorkDirPathIsNotRelative),
 			},
 		},
 	}

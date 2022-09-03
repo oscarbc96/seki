@@ -10,5 +10,6 @@ func init() {
 		new(LatestTagIsNotUsed),
 		new(PreferCopyOverAdd),
 		new(LastUserIsNotRoot),
+		new(WorkDirPathIsNotRelative),
 	}
 }
