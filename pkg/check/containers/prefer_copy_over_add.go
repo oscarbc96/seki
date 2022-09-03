@@ -4,6 +4,7 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/instructions"
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
+	"github.com/oscarbc96/seki/utils"
 )
 
 type PreferCopyOverAdd struct{}
@@ -39,16 +40,17 @@ func (c PreferCopyOverAdd) Run(f load.Input) check.CheckResult {
 	var locations []load.Range
 	for _, stage := range stages {
 		for _, command := range stage.Commands {
-			if _, isAddCommand := command.(*instructions.AddCommand); isAddCommand {
+			if addCommand, isAddCommand := command.(*instructions.AddCommand); isAddCommand {
 				cmdLocation := command.Location()[0] // TODO validate the hardcoded 0
+				colStart, colEnd := utils.FindStartAndEndColumn(addCommand.String(), "ADD")
 				locations = append(locations, load.Range{
 					Start: load.Position{
 						Line:   cmdLocation.Start.Line,
-						Column: 1,
+						Column: colStart,
 					},
 					End: load.Position{
 						Line:   cmdLocation.End.Line,
-						Column: len("ADD"),
+						Column: colEnd,
 					},
 				})
 			}

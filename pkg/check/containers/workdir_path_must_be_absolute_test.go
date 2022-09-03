@@ -46,7 +46,7 @@ CMD python /app/app.py`),
 				Locations: check.Locations{
 					load.Range{
 						Start: load.Position{Line: 2, Column: 9},
-						End:   load.Position{Line: 2, Column: 12},
+						End:   load.Position{Line: 2, Column: 11},
 					},
 				},
 			},
