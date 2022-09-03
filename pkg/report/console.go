@@ -39,7 +39,7 @@ func getStatusColor(s check.Status) text.Color {
 	return text.Reset
 }
 
-func TextFormatter(input_reports []InputReport) (string, error) {
+func ConsoleFormatter(input_reports []InputReport) (string, error) {
 	var result []string
 
 	for _, input_report := range input_reports {
