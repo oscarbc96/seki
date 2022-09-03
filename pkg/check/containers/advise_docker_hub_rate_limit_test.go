@@ -45,7 +45,7 @@ RUN make /app
 CMD python /app/app.py`),
 			want: check.CheckResult{
 				Check:  AdviseDockerHubRateLimit{},
-				Status: check.q,
+				Status: check.FAIL,
 				Locations: check.Locations{
 					load.Range{
 						Start: load.Position{Line: 1, Column: 0},
