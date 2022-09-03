@@ -27,7 +27,7 @@ lint:
 
 test:
 	$(info ******************** running tests ********************)
-	gotestsum
+	gotestsum -- -coverprofile=cover.out ./...
 
 build:
 	$(info ******************** building bin ********************)
