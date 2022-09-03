@@ -17,12 +17,12 @@ func GetChecksFor(tpe load.DetectedType) []check.Check {
 }
 
 func init() {
-	tmp := [][]check.Check{
-		containers.AllChecks,
-		cloudformation.AllChecks,
+	groupOfChecks := [][]check.Check{
+		containers.Checks,
+		cloudformation.Checks,
 	}
 
-	for _, t := range tmp {
-		AllChecks = append(AllChecks, t...)
+	for _, group := range groupOfChecks {
+		AllChecks = append(AllChecks, group...)
 	}
 }

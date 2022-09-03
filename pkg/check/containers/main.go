@@ -2,14 +2,13 @@ package containers
 
 import "github.com/oscarbc96/seki/pkg/check"
 
-var AllChecks []check.Check
+var Checks []check.Check
 
 func init() {
-	AllChecks = append(
-		AllChecks,
+	Checks = []check.Check{
 		new(AdviseDockerHubRateLimit),
 		new(LatestTagIsNotUsed),
 		new(PreferCopyOverAdd),
 		new(LastUserIsNotRoot),
-	)
+	}
 }
