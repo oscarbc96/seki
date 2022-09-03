@@ -3,8 +3,13 @@ $(warning "could not find golangci-lint in $(PATH), see https://golangci-lint.ru
 endif
 
 ifeq (, $(shell which goreleaser))
-$(warning "could not find golangci-lint in $(PATH), see https://goreleaser.com/install/")
+$(warning "could not find goreleaser in $(PATH), see https://goreleaser.com/install/")
 endif
+
+ifeq (, $(shell which gotestsum))
+$(warning "could not find gotestsum in $(PATH), see https://github.com/gotestyourself/gotestsum#install")
+endif
+
 
 .PHONY: format lint test build install freeze freeze-upgrade generate
 
@@ -22,7 +27,7 @@ lint:
 
 test:
 	$(info ******************** running tests ********************)
-	go test -cover -v ./...
+	gotestsum -- -coverprofile=cover.out ./...
 
 build:
 	$(info ******************** building bin ********************)

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 )
 
-func JSONFormatter(input_reports []InputReport) (string, error) {
-	jsonOutput, err := json.MarshalIndent(input_reports, "", "  ")
+func JSONFormatter(inputReports []InputReport) (string, error) {
+	jsonOutput, err := json.MarshalIndent(inputReports, "", "  ")
 	if err != nil {
 		return "", err
 	}
