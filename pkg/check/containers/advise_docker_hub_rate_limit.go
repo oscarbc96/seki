@@ -3,6 +3,7 @@ package containers
 import (
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
+	"github.com/oscarbc96/seki/pkg/metadata"
 )
 
 type AdviseDockerHubRateLimit struct{}
@@ -24,7 +25,7 @@ func (AdviseDockerHubRateLimit) Controls() map[string][]string {
 func (AdviseDockerHubRateLimit) Tags() []string { return []string{"docker"} }
 
 func (AdviseDockerHubRateLimit) RemediationDoc() string {
-	return "https://sekisecurity.com/docs/"
+	return metadata.GenerateChecksDocsURL("containers/advise-docker-hub-rate-limit")
 }
 
 func (AdviseDockerHubRateLimit) InputTypes() []load.DetectedType {

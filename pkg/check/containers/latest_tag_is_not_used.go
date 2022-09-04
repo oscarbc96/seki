@@ -3,6 +3,7 @@ package containers
 import (
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
+	"github.com/oscarbc96/seki/pkg/metadata"
 )
 
 type LatestTagIsNotUsed struct{}
@@ -23,7 +24,9 @@ func (LatestTagIsNotUsed) Controls() map[string][]string {
 
 func (LatestTagIsNotUsed) Tags() []string { return []string{"docker"} }
 
-func (LatestTagIsNotUsed) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
+func (LatestTagIsNotUsed) RemediationDoc() string {
+	return metadata.GenerateChecksDocsURL("containers/latest-tag-is-not-used")
+}
 
 func (LatestTagIsNotUsed) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}

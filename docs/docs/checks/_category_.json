@@ -1,0 +1,10 @@
+{
+  "label": "Checks",
+  "link": {
+    "type": "generated-index",
+    "title": "Checks",
+    "description": "Learn about the most important Docusaurus concepts!",
+    "slug": "/checks",
+    "keywords": ["checks"]
+  }
+}

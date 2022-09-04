@@ -1,0 +1,10 @@
+{
+  "label": "Containers",
+  "link": {
+    "type": "generated-index",
+    "title": "Containers",
+    "description": "Learn about the most important Docusaurus concepts!",
+    "slug": "/checks/containers",
+    "keywords": ["checks", "containers"]
+  }
+}

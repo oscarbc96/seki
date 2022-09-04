@@ -6,6 +6,15 @@ sidebar_position: 2
 
 ## Install the pre-compiled binary
 
+### Github Actions
+
+```yaml
+steps:
+  - uses: oscarbc96/setup-seki
+```
+
+See configuration at [https://github.com/oscarbc96/setup-seki](https://github.com/oscarbc96/setup-seki)
+
 ### homebrew tap
 
 ```bash

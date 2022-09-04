@@ -4,6 +4,7 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/instructions"
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
+	"github.com/oscarbc96/seki/pkg/metadata"
 	"github.com/oscarbc96/seki/utils"
 	"path/filepath"
 )
@@ -26,7 +27,9 @@ func (WorkdirPathMustBeAbsolute) Controls() map[string][]string {
 
 func (WorkdirPathMustBeAbsolute) Tags() []string { return []string{"docker"} }
 
-func (WorkdirPathMustBeAbsolute) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
+func (WorkdirPathMustBeAbsolute) RemediationDoc() string {
+	return metadata.GenerateChecksDocsURL("containers/workdir-path-must-be-absolute")
+}
 
 func (WorkdirPathMustBeAbsolute) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}

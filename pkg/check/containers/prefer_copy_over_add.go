@@ -4,6 +4,7 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/instructions"
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
+	"github.com/oscarbc96/seki/pkg/metadata"
 	"github.com/oscarbc96/seki/utils"
 )
 
@@ -25,7 +26,9 @@ func (PreferCopyOverAdd) Controls() map[string][]string {
 
 func (PreferCopyOverAdd) Tags() []string { return []string{"docker"} }
 
-func (PreferCopyOverAdd) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
+func (PreferCopyOverAdd) RemediationDoc() string {
+	return metadata.GenerateChecksDocsURL("containers/prefer-copy-over-add")
+}
 
 func (PreferCopyOverAdd) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}
