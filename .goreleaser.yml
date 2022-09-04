@@ -61,5 +61,8 @@ docker_manifests:
       - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-amd64
       - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-arm64v8
 
+release:
+  prerelease: auto
+
 changelog:
   use: github
