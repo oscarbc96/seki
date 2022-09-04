@@ -62,4 +62,4 @@ docker_manifests:
       - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-arm64v8
 
 changelog:
-  use: github-native
+  use: github
