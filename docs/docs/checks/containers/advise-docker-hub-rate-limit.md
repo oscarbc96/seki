@@ -1,0 +1,2 @@
+# Advise DockerHub rate limit
+
