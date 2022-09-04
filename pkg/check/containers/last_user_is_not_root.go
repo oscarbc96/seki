@@ -4,6 +4,7 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/instructions"
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/load"
+	"github.com/oscarbc96/seki/pkg/metadata"
 	"github.com/oscarbc96/seki/utils"
 	"github.com/samber/lo"
 )
@@ -26,7 +27,9 @@ func (LastUserIsNotRoot) Controls() map[string][]string {
 
 func (LastUserIsNotRoot) Tags() []string { return []string{"docker"} }
 
-func (LastUserIsNotRoot) RemediationDoc() string { return "https://sekisecurity.com/docs/" }
+func (LastUserIsNotRoot) RemediationDoc() string {
+	return metadata.GenerateChecksDocsURL("containers/last-user-is-not-root")
+}
 
 func (LastUserIsNotRoot) InputTypes() []load.DetectedType {
 	return []load.DetectedType{load.DetectedContainerDockerfile}

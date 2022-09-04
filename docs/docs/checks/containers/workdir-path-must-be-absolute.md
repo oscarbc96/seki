@@ -1,0 +1,1 @@
+# WORKDIR path must be absolute
