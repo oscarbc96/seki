@@ -18,6 +18,7 @@ var versionCmd = &cobra.Command{
 	Long:  `All software has versions. This is Seki's`,
 	Run: func(cmd *cobra.Command, args []string) {
 		writer := tabwriter.NewWriter(os.Stdout, 0, 8, 0, '\t', 0)
+		fmt.Fprintln(writer, "Seki - ", metadata.Homepage)
 		fmt.Fprintln(writer, "Version:", "\t", metadata.Version)
 		fmt.Fprintln(writer, "Git commit:", "\t", metadata.Commit)
 		fmt.Fprintln(writer, "Built:", "\t", metadata.BuiltDate)
