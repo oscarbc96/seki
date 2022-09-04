@@ -3,6 +3,7 @@ package load
 import (
 	"bufio"
 	"fmt"
+	"github.com/aligator/nogo"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"os"
@@ -106,14 +107,24 @@ func (i *Input) DetectedTypes() []DetectedType {
 func FlatPathsToInputs(paths []string) ([]Input, error) {
 	var inputs []Input
 	for _, path := range paths {
+		ioFS := afero.NewIOFS(afero.NewBasePathFs(cacheOnReadFS, path))
+		n := nogo.New(nogo.DotGitRule)
+		if err := n.AddFromFS(ioFS, ".gitignore"); err != nil {
+			panic(err)
+		}
+
 		err := AFS.Walk(path, func(walkPath string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
 
-			// TODO move the following logic to parameters, use runner options?
-			if info.Name() == ".git" {
-				return filepath.SkipDir
+			relPath, err := filepath.Rel(path, walkPath)
+			if err != nil {
+				return err
+			}
+
+			if ok, err := n.WalkFunc(ioFS, relPath, info.IsDir(), nil); !ok {
+				return err
 			}
 
 			absPath, err := filepath.Abs(walkPath)

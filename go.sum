@@ -40,6 +40,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
 github.com/agext/levenshtein v1.2.3/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
+github.com/aligator/nogo v0.3.1 h1:/g4/AkP6/UjFhOwXiRKdtFrwGOfMqW067xtivK4p0wU=
+github.com/aligator/nogo v0.3.1/go.mod h1:yI8hSSIjnrFSDNXypY38NX8V+rAR+mzPHdh+6FzGVW8=
 github.com/awslabs/goformation/v6 v6.10.0 h1:DNJl6dILReNgbc7RGgymWpUpyqPrkC/26Mx6xOBGIMo=
 github.com/awslabs/goformation/v6 v6.10.0/go.mod h1:Hobtf9ZQSmWiaf2ZT6jPNrRejNKXbH933kwP4kttSJU=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
