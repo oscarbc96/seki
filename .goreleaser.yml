@@ -61,6 +61,11 @@ docker_manifests:
       - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-amd64
       - ghcr.io/oscarbc96/{{ .ProjectName }}:latest-arm64v8
 
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+
 release:
   prerelease: auto
 
