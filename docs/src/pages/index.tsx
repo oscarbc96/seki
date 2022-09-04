@@ -12,7 +12,7 @@ export default function Home(): JSX.Element {
       description={siteConfig.tagline}>
       <main style={{width: "80%", margin:"0 auto"}}>
           <h1>Seki</h1>
-          <AsciinemaPlayer src="terminal.cast" preload={true} loop={true} autoPlay={true} terminalFontSize={"16px"} fit={false}/>
+          <AsciinemaPlayer src="terminal.cast" preload={true} autoPlay={true} terminalFontSize={"16px"} fit={false}/>
       </main>
     </Layout>
   );
