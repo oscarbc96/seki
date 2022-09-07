@@ -6,33 +6,15 @@ sidebar_position: 2
 
 ## Install the pre-compiled binary
 
-### Github Actions
+### Manually
 
-```yaml
-steps:
-  - uses: oscarbc96/setup-seki
-```
+Download the pre-compiled binaries from the [releases page](https://github.com/oscarbc96/seki/releases) and copy it to the desired location.
 
-See configuration at [https://github.com/oscarbc96/setup-seki](https://github.com/oscarbc96/setup-seki)
+### Using go
 
-### homebrew tap
-
-```bash
-brew install 
-```
-
-### go install
-
-Not working 
-```
-The go.mod file for the module providing named packages contains one or
-more replace directives. It must not contain directives that would cause
-it to be interpreted differently than if it were the main module.
-```
 ```bash
 go install github.com/oscarbc96/seki@latest
 ```
-
 
 ## Run with docker
 
@@ -44,21 +26,19 @@ docker run --rm \
 
 ## Compiling from source
 
-### Clone
-
 ```bash
 git clone https://github.com/oscarbc96/seki
 cd seki
-```
-
-### Install dependencies
-
-```bash
-make install
-```
-
-### Build
-
-```bash
 make build
 ```
+
+## Continuous Integration
+
+### Github Actions
+
+```yaml
+steps:
+  - uses: oscarbc96/setup-seki
+```
+
+See configuration at [https://github.com/oscarbc96/setup-seki](https://github.com/oscarbc96/setup-seki)
