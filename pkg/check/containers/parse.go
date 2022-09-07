@@ -1,7 +1,7 @@
 package containers
 
 import (
-	"github.com/distribution/distribution/reference"
+	"github.com/distribution/distribution/v3/reference"
 	"github.com/moby/buildkit/frontend/dockerfile/instructions"
 	"github.com/moby/buildkit/frontend/dockerfile/parser"
 	"github.com/oscarbc96/seki/pkg/load"
