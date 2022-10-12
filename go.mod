@@ -12,7 +12,7 @@ require (
 	github.com/rs/zerolog v1.28.0
 	github.com/samber/lo v1.28.0
 	github.com/spf13/afero v1.9.2
-	github.com/spf13/cobra v1.5.0
+	github.com/spf13/cobra v1.6.0
 	github.com/stretchr/testify v1.8.0
 )
 
