@@ -4,6 +4,7 @@ import (
 	"github.com/oscarbc96/seki/pkg/check"
 	"github.com/oscarbc96/seki/pkg/check/cloudformation"
 	"github.com/oscarbc96/seki/pkg/check/containers"
+	"github.com/oscarbc96/seki/pkg/check/github_actions"
 	"github.com/oscarbc96/seki/pkg/load"
 	"github.com/samber/lo"
 )
@@ -20,6 +21,7 @@ func init() {
 	groupOfChecks := [][]check.Check{
 		containers.Checks,
 		cloudformation.Checks,
+		github_actions.Checks,
 	}
 
 	for _, group := range groupOfChecks {

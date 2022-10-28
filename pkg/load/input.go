@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/aligator/nogo"
+	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"os"
@@ -32,11 +33,15 @@ func NewInput(path string, info os.FileInfo) *Input {
 	p := new(Input)
 
 	p.path = path
+	p.info = info
 
 	if info == nil {
-		info, _ = AFS.Stat(path)
+		newInfo, err := AFS.Stat(path)
+		if err != nil {
+			log.Fatal().Err(err)
+		}
+		p.info = newInfo
 	}
-	p.info = info
 
 	return p
 }

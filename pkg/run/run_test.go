@@ -19,7 +19,7 @@ func TestCheckIdsAreUnique(t *testing.T) {
 }
 
 func TestNumberOfChecks(t *testing.T) {
-	assert.Equal(t, 7, len(AllChecks))
+	assert.Equal(t, 8, len(AllChecks))
 }
 
 func TestGetChecksFor(t *testing.T) {

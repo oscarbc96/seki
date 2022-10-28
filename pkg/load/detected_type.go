@@ -8,12 +8,14 @@ const (
 	DetectedUnknown DetectedType = iota
 	DetectedAwsCloudformation
 	DetectedContainerDockerfile
+	DetectedCICDGitHubActions
 )
 
 var detectedTypeToString = map[DetectedType]string{
 	DetectedUnknown:             "UNKNOWN",
 	DetectedAwsCloudformation:   "cloudformation",
 	DetectedContainerDockerfile: "dockerfile",
+	DetectedCICDGitHubActions:   "github_actions",
 }
 
 func (d DetectedType) String() string {
