@@ -24,6 +24,6 @@ jobs:
         run: make test
 
       - name: Check it can compile
-        uses: goreleaser/goreleaser-action@v3
+        uses: goreleaser/goreleaser-action@v4
         with:
           args: build --snapshot --rm-dist --single-target
