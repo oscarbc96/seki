@@ -6,7 +6,7 @@ require (
 	github.com/aligator/nogo v0.3.1
 	github.com/awslabs/goformation/v6 v6.10.0
 	github.com/distribution/distribution/v3 v3.0.0-20220902125104-0122d7ddaec0
-	github.com/jedib0t/go-pretty/v6 v6.3.8
+	github.com/jedib0t/go-pretty/v6 v6.4.4
 	github.com/moby/buildkit v0.9.3
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.28.0
