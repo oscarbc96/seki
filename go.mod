@@ -7,7 +7,7 @@ require (
 	github.com/awslabs/goformation/v6 v6.10.0
 	github.com/distribution/distribution/v3 v3.0.0-20220902125104-0122d7ddaec0
 	github.com/jedib0t/go-pretty/v6 v6.3.8
-	github.com/moby/buildkit v0.9.3
+	github.com/moby/buildkit v0.11.2
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.28.0
 	github.com/samber/lo v1.28.0
@@ -20,11 +20,10 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/containerd/typeurl v1.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v20.10.17+incompatible // indirect
+	github.com/docker/docker v23.0.0-rc.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -36,8 +35,8 @@ require (
 	github.com/sanathkr/yaml v0.0.0-20170819201035-0056894fa522 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/exp v0.0.0-20220907003533-145caa8ea1d0 // indirect
-	golang.org/x/sys v0.0.0-20220907062415-87db552b00fd // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/text v0.5.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
