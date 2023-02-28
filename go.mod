@@ -6,7 +6,7 @@ require (
 	github.com/aligator/nogo v0.3.1
 	github.com/awslabs/goformation/v6 v6.10.0
 	github.com/distribution/distribution/v3 v3.0.0-20220902125104-0122d7ddaec0
-	github.com/jedib0t/go-pretty/v6 v6.3.8
+	github.com/jedib0t/go-pretty/v6 v6.4.6
 	github.com/moby/buildkit v0.9.3
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.28.0
@@ -36,7 +36,7 @@ require (
 	github.com/sanathkr/yaml v0.0.0-20170819201035-0056894fa522 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/exp v0.0.0-20220907003533-145caa8ea1d0 // indirect
-	golang.org/x/sys v0.0.0-20220907062415-87db552b00fd // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
